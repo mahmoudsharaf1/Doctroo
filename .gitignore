@@ -10,9 +10,8 @@ npm-debug.*
 web-build/
 web-report/
 
-# macOS
-.DS_Store
-
 
 Firebase.js
 FbConfig.js
+# macOS
+.DS_Store
