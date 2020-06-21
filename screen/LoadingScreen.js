@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View, ActivityIndicator, AsyncStorage } from 'react-native';
+import { StyleSheet, View, AsyncStorage, Image } from 'react-native';
+import * as Permissions from 'expo-permissions';
 
 import firebase from '../Firebase';
 
@@ -7,10 +8,23 @@ export default class LoadingScreen extends Component {
 
       constructor(props) {
         super(props);
-        // AsyncStorage.removeItem('fb_token')
-        this.startApp();
+        this.getLocation();
+        // AsyncStorage.removeItem('type')
+        // this.startApp();
     }
 
+    async getLocation () {
+      try{
+          
+          const { status } = await Permissions.askAsync(Permissions.LOCATION);
+          if (status !== 'granted') {
+              console.log(' permisstion denid ');
+          }
+
+      } catch (e) {
+          console.log(e);
+      }
+  }
 
     componentDidMount() {
       firebase.auth().onAuthStateChanged(user => {
@@ -18,24 +32,27 @@ export default class LoadingScreen extends Component {
       })
     }
 
-    async startApp() {
-        try {
-        const token = await AsyncStorage.getItem('fb_token');
-            if (token) {
-                this.props.navigation.navigate('App')
-            } else {
-                this.props.navigation.navigate('Auth')    
-            }
-        } catch (e) {
-            console.log(e)
-        }
-    };
+    // async startApp() {
+    //     try {
+    //     const token = await AsyncStorage.getItem('type');
+    //         if (token) {
+    //             this.props.navigation.navigate('App')
+    //         } else {
+    //             this.props.navigation.navigate('Auth')    
+    //         }
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // };
 
   render() {
     return (
       <View style={styles.contanier}>
-        <Text> Loading ... </Text>
-        <ActivityIndicator  size='large' />
+        <Image
+          style={{ flex: 1, width: '100%'}} 
+          source={require('../images/photoApp/logo.png')}
+          // startApp={this.startApp.bind(this)} 
+        />
       </View>
     )
   }

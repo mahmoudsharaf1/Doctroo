@@ -7,6 +7,7 @@ import {
     FB_ATTEMPTING,
     FB_LOGIN_SUCCESS,
     FB_LOGIN_FAILED,
+    REFRESH_PROFILE
 } from './type';
 
 
@@ -16,12 +17,7 @@ export const facebooklogin =  () => {
         dispatch ({type: FB_ATTEMPTING});
 
             await Facebook.initializeAsync(FbConfig.appId)       
-            const {
-                type,
-                token
-                } = await Facebook.logInWithReadPermissionsAsync({
-                permissions: ['public_profile'],
-                });
+            const {type,token } = await Facebook.logInWithReadPermissionsAsync({ permissions: ['public_profile'], });
 
             if (type === 'success') {
                 finishlogin(dispatch, token);
@@ -41,21 +37,29 @@ export const facebooklogin =  () => {
                 await firebase.auth().signInAndRetrieveDataWithCredential(credential); 
 
         
-            let profiles = { displayName, photoURL, uid };
-            await firebase.database().ref(`users/${uid}`).update(profiles);
+            let profile = { displayName, photoURL, uid };
+            await firebase.database().ref(`users/${uid}`).update(profile);
             
             const snap = await firebase.database().ref(`users/${uid}`).once('value');
-            profiles = snap.val();
+            profile = snap.val();
             
 
         await AsyncStorage.setItem('fb_token', token)
 
-            return dispatch({ type: FB_LOGIN_SUCCESS, payload: {token, profiles } })
+            return dispatch({ type: FB_LOGIN_SUCCESS, payload: {token, profile } })
             } catch (e) {
                 console.log(e);
                 return dispatch ({ type: FB_LOGIN_FAILED});
             }
     };
 
-
+    export const refreshProfileData = (uid) => {
+        return async (dispatch) => {
+            const snap = await firebase.database().ref(`users/${uid}`).once('value');
+            const profile = snap.val();
+            return dispatch ({ type: REFRESH_PROFILE, payload: {profile} })
+        };
+    };
+    
+    
 

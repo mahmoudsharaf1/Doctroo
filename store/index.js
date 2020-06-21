@@ -8,10 +8,10 @@ import reducer from '../reducer';
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['auth']
+    whitelist: ['auth', 'authProfile', 'authDoctor']
 };
-const persistedReducer =  persistReducer(persistConfig, reducer)
+const persistedReducer =  persistReducer(persistConfig, reducer);
 
 export const store = createStore(persistedReducer, {}, applyMiddleware(thunk));
 
-export const persistedStore  = persistStore(store)
+export const persistedStore  = persistStore(store);

@@ -2,31 +2,48 @@
 import React from 'react'
 import {  createAppContainer, createSwitchNavigator} from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import { Ionicons } from "@expo/vector-icons";
 
-import SignIn from '../screen/SignIn';
-import Welcome from '../screen/Welcome';
-import Browse01 from '../screen/Browse01';
-import CreateAccount from '../screen/CreateAccount';
+
 import LoadingScreen from '../screen/LoadingScreen';
+import Onboarding from '../screen/Onboarding';
+import Welcome from '../screen/Welcome';
+import CreateAccount from '../screen/CreateAccount';
+import SignUpDoctor from '../screen/SignUpDoctor';
+import ForgetPassword from '../screen/ForgetPassword';
+import SetLocation from '../screen/SetLocation';
+import Browse01 from '../screen/Browse01';
 import Account from '../screen/Account';
-import OverView from '../screen/OverView';
 import Consultations from '../screen/Consultations';
+import Notifications from '../screen/Notifications';
+import ChooseLocation from '../screen/ChooseLocation';
+import ChatScreen from '../screen/ChatScreen';
+import Settings from '../screen/Settings';
+import ChangePassword from '../screen/ChangePassword';
+import Profile01 from '../screen/Profile01';
+import ReviewAppointment from '../screen/ReviewAppointment';
+import Appointments from '../screen/Appointments';
+import MakeAppointment from '../screen/MakeAppointment';
+import Success from '../screen/Success';
+import Details from '../screen/Details';
+import Map from '../screen/Map';
+import Categories from '../screen/Categories';
+import Search from '../screen/Search';
 
 
 const TabStack = createStackNavigator(
     {
         default: createBottomTabNavigator(
             {
-                Home: {
+                Browse01: {
                     screen: Browse01,
                     navigationOptions: {
-                        tabBarIcon: ({ tintColor }) => <Ionicons name="ios-home" size={24} color={tintColor} />
+                        tabBarIcon: ({ tintColor }) => <Ionicons name="ios-search" size={24} color={tintColor} />
                     }
                 },
-                Data: {
-                    screen: Account,
+                Appointments: {
+                    screen: Appointments,
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => <Ionicons name="ios-calendar" size={24} color={tintColor} />
                     }
@@ -35,17 +52,17 @@ const TabStack = createStackNavigator(
                     screen: Consultations,
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => (
-                            <Ionicons name="ios-chatboxes" size={24} color={tintColor}/>
+                            <Ionicons name="ios-chatbubbles" size={24} color={tintColor}/>
                         )
                     }
                 },
-                Notification: {
-                    screen: Browse01,
+                Notifications: {
+                    screen: Notifications,
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => <Ionicons name="ios-notifications" size={24} color={tintColor} />
                     }
                 },
-                Profile: {
+                Account: {
                     screen: Account,
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => <Ionicons name="ios-person" size={24} color={tintColor} />
@@ -53,39 +70,54 @@ const TabStack = createStackNavigator(
                 }
             },{
             defaultNavigationOptions: {},
-            tabBarOptions: {activeTintColor: "#E9446A", inactiveTintColor: "#B8BBC4", showLabel: false}}),
+            tabBarOptions: {activeTintColor: "#1590f0", inactiveTintColor: "#B8BBC4", showLabel: false}}),
     },
     {
         mode: "modal",
         headerMode: "none"
-      // initialRouteName: "postModal"
 }   
 );
 
+
     const AppStack = createStackNavigator({
         Main: {screen: TabStack},
-        OverView
+        Search,
+        Map,
+        ChatScreen,
+        Settings,
+        ChangePassword,
+        ForgetPassword,
+        SetLocation,
+        Profile01,
+        Review: {screen: ReviewAppointment},
+        MakeAppointment,
+        Success,
+        Details,
+        Categories,
+
     },{
     defaultNavigationOptions: {
-    header: null
+        headerShown: false
     }
     })
 
     const AuthStack = createStackNavigator({
         Welcome,
-        SignIn,
+        SignUpDoctor,
         CreateAccount,
+        ChooseLocation,
     },{
     defaultNavigationOptions: {
-        header: null    
+        headerShown: false    
     }
     })
 
     export default createAppContainer(
         createSwitchNavigator({
             Loading: LoadingScreen,
-            App: AppStack,
             Auth: AuthStack,
+            App: AppStack,
+            
         },
         {
             initialRouteName: 'Loading'
