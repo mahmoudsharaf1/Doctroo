@@ -94,7 +94,7 @@ class Profile01 extends Component {
                                     source={{ uri: profile.photoURL }}
 
                                 />
-                                <FontAwesome name='heart' size={23} style={{ color: 'tomato', marginLeft: 20 }} />
+                                <FontAwesome name='heart-o' size={23} style={{ color: '#1590f0', marginLeft: 20 }} />
                             </View>
 
                             <Text style={{ fontSize: 25, fontWeight: 'bold', marginTop: 7 }}>{profile.displayName} <Ionicons name='ios-checkmark-circle' style={{ color: '#1590f0' }} size={17} />

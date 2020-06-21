@@ -66,7 +66,7 @@ class Browse01 extends Component {
             onPress={() => this.props.navigation.navigate('Profile01', { item })}
           >
             <TouchableOpacity style={styles.like} onPress={()=> this.setState({like: 1})} >
-              <FontAwesome name='heart' size={32} style={{ color: item.like === 1 ? '#FF0000' : '#fff', textAlign: 'right', flex: 1 }} />
+              <FontAwesome name='heart' size={32} style={{ color: item.like === 1 ? '#ff0000' : '#fff', textAlign: 'right', flex: 1 }} />
             </TouchableOpacity>
 
             <Image
