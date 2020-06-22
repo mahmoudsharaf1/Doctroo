@@ -5,17 +5,35 @@ import { Icon, Divider } from 'react-native-elements';
 
 import firebase from '../Firebase';
 import { specialty } from '../contacts';
+import Favorites from '../contacts/Favorites';
 
 const { height, width } = Dimensions.get('window')
 
 class Browse01 extends Component {
 
 
-  state = {
-    users: [],
-    categories: [],
-    error: null,
-    loading: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      addedToFavorite: false,
+      users: [],
+      categories: [],
+      error: null,
+      loading: false,
+      uid: null
+    };
+
+    this.addToFavorite = this.addToFavorite.bind(this);
+  };
+
+  addToFavorite() {
+    
+    
+    firebase.database().ref(`users/doctors/` + uid).child('like').set(this.state.addedToFavorite)
+    this.setState({
+      addedToFavorite: !this.state.addedToFavorite
+    });
+
   }
 
 
@@ -27,6 +45,10 @@ class Browse01 extends Component {
       let users = val.val();
       users.uid = val.key;
 
+  this.setState({
+      uid: users.uid
+    })
+
       this.setState((prevState) => {
         return {
           users: [...prevState.users, users]
@@ -34,6 +56,8 @@ class Browse01 extends Component {
       })
     })
     this.setState({ categories: this.props.categories });
+
+  
   }
 
 
@@ -57,7 +81,11 @@ class Browse01 extends Component {
 
   }
 
+
+
   renderRowusers = ({ item }) => {
+    const { addedToFavorite } = this.state;
+    
     return (
       <View>
         <View>
@@ -65,8 +93,8 @@ class Browse01 extends Component {
             style={{ borderRadius: 5 }}
             onPress={() => this.props.navigation.navigate('Profile01', { item })}
           >
-            <TouchableOpacity style={styles.like} onPress={()=> this.setState({like: 1})} >
-              <FontAwesome name='heart' size={32} style={{ color: item.like === 1 ? '#ff0000' : '#fff', textAlign: 'right', flex: 1 }} />
+            <TouchableOpacity style={styles.like} onPress={this.addToFavorite}>
+              <FontAwesome name='heart' size={32} style={{ color: item ? '#fff' : '#ff0000', textAlign: 'right', flex: 1 }} />
             </TouchableOpacity>
 
             <Image
