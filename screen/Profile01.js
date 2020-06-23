@@ -48,8 +48,8 @@ class Profile01 extends Component {
 
         console.log(user)
         return (
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatScreen', { chat, user })}>
-                <Ionicons name='ios-chatbubbles' size={23} style={{ color: '#1590f0', marginRight: 20 }}
+            <TouchableOpacity style={[styles.icons, { marginRight: 15, padding: 8 }]} onPress={() => this.props.navigation.navigate('ChatScreen', { chat, user })}>
+                <Ionicons name='ios-chatbubbles' size={23} style={{ color: '#1590f0'}}
                     accessibilityValue={this.state.users}
                 />
 
@@ -61,7 +61,7 @@ class Profile01 extends Component {
 
     render() {
 
-        const { data } = this.state;
+        
         const profile = this.props.navigation.getParam('item')
 
         return (
@@ -94,7 +94,9 @@ class Profile01 extends Component {
                                     source={{ uri: profile.photoURL }}
 
                                 />
-                                <FontAwesome name='heart-o' size={23} style={{ color: '#1590f0', marginLeft: 20 }} />
+                                <TouchableOpacity style={styles.icons}>
+                                    <FontAwesome name='heart-o' size={23} style={{ color: '#1590f0', top: 1.5 }} />
+                                </TouchableOpacity>
                             </View>
 
                             <Text style={{ fontSize: 25, fontWeight: 'bold', marginTop: 7 }}>{profile.displayName} <Ionicons name='ios-checkmark-circle' style={{ color: '#1590f0' }} size={17} />
@@ -311,7 +313,16 @@ const styles = StyleSheet.create({
         borderRadius: 7,
         marginHorizontal: 15,
         marginBottom: 30
-    }
+    },
+    icons: {
+        borderWidth: 1,
+        borderRadius: 30,
+        padding: 6,
+        paddingTop: 5,
+        paddingBottom: 6,
+        borderColor: '#999',
+        marginLeft: 10
+    },
 });
 
 
