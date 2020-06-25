@@ -1,7 +1,16 @@
 import { AsyncStorage } from 'react-native';
 import firebase from '../Firebase';
 
-import { SIGNIN_ATTEMPING_DOCTOR, SIGNUP_FAILED_DOCTOR, SIGNIN_SUCCESS_DOCTOR } from './type';
+import { 
+    SIGNIN_ATTEMPING_DOCTOR, 
+    SIGNUP_FAILED_DOCTOR, 
+    SIGNIN_SUCCESS_DOCTOR ,
+    
+    GET_SPECIALTY_ATTEMPING,
+    GET_SPECIALTY_SUCCESS,
+    GET_SPECIALTY_FAILED
+} from './type';
+
 
 
 export const handelSignUpDoctor = ({
@@ -23,6 +32,7 @@ export const handelSignUpDoctor = ({
     return async (dispatch) => {
         try {
             dispatch({ type: SIGNIN_ATTEMPING_DOCTOR })
+
 
 
             firebase.auth().createUserWithEmailAndPassword(email, password).then(resp => {
@@ -67,7 +77,8 @@ export const handelSignUpDoctor = ({
                         })
                     })
 
-                firebase.database().ref('specialty/' + resp.user.uid).set({
+                        
+                firebase.database().ref('specialty/' + specialty + '/' + resp.user.uid ).set({
                     displayName,
                     email,
                     password,
@@ -114,3 +125,28 @@ export const handelSignUpDoctor = ({
     }
 
 };
+
+
+// export const getSpecialtyDoctors = (uid) => {
+    
+//     return async (dispatch) => {
+//         dispatch({ type: GET_SPECIALTY_ATTEMPING });
+
+//         firebase.database().ref('specialty/' + uid).on('child_added', (snap) => {
+//             const specialty = []
+
+            
+//             snap.forEach(value => {
+//                 const specialty = value.val();
+//                 specialty.id = value.key;
+//                 specialty.push(specialty);
+//                 console.log(specialty)
+//             })
+
+//             dispatch({ type: GET_SPECIALTY_SUCCESS, payload: specialty });
+
+//         }).catch (error => {
+//             dispatch({ type: GET_SPECIALTY_FAILED, payload: error.message });
+//         })
+//     }
+// }

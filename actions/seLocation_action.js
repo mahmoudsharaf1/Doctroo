@@ -17,7 +17,7 @@ export const savelocation = (location) => {
 
             let uid = firebase.auth().currentUser.uid
 
-            await firebase.database().ref('users/doctors/' + uid).push(location)
+            await firebase.database().ref('users/profiles/').child(uid).push(location)
 
             dispatch({ type: LOCATION_SUCCESS });
 

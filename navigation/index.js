@@ -29,6 +29,7 @@ import Success from '../screen/Success';
 import Details from '../screen/Details';
 import Map from '../screen/Map';
 import Categories from '../screen/Categories';
+import Specialty from '../screen/Specialty';
 import Search from '../screen/Search';
 
 
@@ -94,6 +95,7 @@ const TabStack = createStackNavigator(
         Success,
         Details,
         Categories,
+        Specialty
 
     },{
     defaultNavigationOptions: {
@@ -117,7 +119,7 @@ const TabStack = createStackNavigator(
             Loading: LoadingScreen,
             Auth: AuthStack,
             App: AppStack,
-            
+            Categories
         },
         {
             initialRouteName: 'Loading'

@@ -12,23 +12,25 @@ class Favorites extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      addedToFavorite: true,
-      users: [],
+      liked: false,
       uid: null,
+      fav: false
     };
-
-    this.addToFavorite = this.addToFavorite.bind(this);
   };
+
+  likeImage = async () => {
+    const uid = firebase.auth().currentUser.uid
+
+    firebase.database().ref(`users/doctors/${this.state.uid}`)
+    .child('favorit').child(uid).set(!this.state.liked);
+    
+    const likeState = await !this.state.liked
+    this.setState({ liked: likeState })
+  }
 
   componentDidMount() {
 
-
     this.dataDoctors()
-
-
-    this.setState({ categories: this.props.categories });
-
-
   }
 
 
@@ -37,58 +39,43 @@ class Favorites extends Component {
       let users = val.val();
       users.uid = val.key;
 
-      // this.setState({
-      //   uid: users.uid
-      // })
-
-      this.setState((prevState) => {
-        return {
-          users: [...prevState.users, users]
-        }
-      })
       this.setState({
-        
-          uid: [users.uid]
-        
+        uid: users.uid
       })
+
+      // this.setState((prevState) => {
+      //   return {
+      //     users: [...prevState.users, users]
+      //   }
+      // })
     })
   }
 
 
-  addToFavorite() {
-    const uid = firebase.auth().currentUser.uid
-
-    firebase.database().ref(`users/doctors/${this.state.uid}`).child('favorit').child(uid).set(this.state.addedToFavorite);
-
-    this.setState({
-      addedToFavorite: !this.state.addedToFavorite
-    });
-
-  }
 
 
   componentWillReceiveProps() {
     const uid = firebase.auth().currentUser.uid
 
     firebase.database().ref('users/doctors/' + this.state.uid).child('favorit').child(uid).on('value', snap => {
-      // console.log(snap)
-
-      this.setState({
-        addedToFavorite: snap
-      })
+        console.log(snap)
+        this.setState({
+          fav: snap
+        })
     })
   }
 
 
   render() {
 
-    const { addedToFavorite, users } = this.state;
-    const uid = firebase.auth().currentUser.uid
+    const { fav, liked } = this.state
+    const colorValue = !liked ? '#fff' : '#fb7777'
+    const likeValue = liked ? '1' : '0'
 
-
+    // console.log(favorite.uid)
     return (
-      <TouchableOpacity style={styles.like} onPress={this.addToFavorite}>
-        <FontAwesome name='heart' accessibilityValue={users.uid} size={32} style={{ color: !addedToFavorite ? '#ff0000' : '#fff', textAlign: 'right', flex: 1 }} />
+      <TouchableOpacity style={styles.like} onPress={this.likeImage}>
+        <FontAwesome name='heart' size={32} style={{ color: colorValue, textAlign: 'right', flex: 1 }} />
       </TouchableOpacity>
     );
   }
@@ -107,3 +94,55 @@ const styles = StyleSheet.create({
 
 //make this component available to the app
 export default Favorites;
+
+
+
+
+
+
+
+
+
+
+// import React from 'react'
+// import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
+// import { Ionicons } from '@expo/vector-icons';
+
+// export default class LikeButton extends React.Component {
+// 	state = {
+// 		liked: false,
+// 	}
+// 	likeImage = async () => {
+// 		const likeState = await !this.state.liked
+// 		this.setState({ liked: likeState })
+// 	}
+// 	render() {
+// 		const { liked } = this.state
+// 		const colorValue = liked ? '#fb7777' : '#fff'
+// 		const likeValue = liked ? '1' : '0'
+// 		return (
+// 			<View style={styles.container}>
+// 				<TouchableOpacity style={styles.like}
+// 					onPress={this.likeImage}
+// 				>
+// 					<Ionicons name="md-heart" size={55} color={colorValue} />
+// 				</TouchableOpacity>
+// 				<Text style={styles.likeNumberStyle}>
+// 					{likeValue}
+// 				</Text>
+// 			</View>
+// 		);
+// 	}
+// }
+
+// const styles = StyleSheet.create({
+// 	container: {
+// 		flex: 1,
+// 		alignItems: 'center',
+// 		justifyContent: 'center',
+// 	},
+// 	likeNumberStyle: {
+// 		fontSize: 16,
+// 		fontWeight: 'bold'
+// 	}
+// })

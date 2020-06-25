@@ -118,6 +118,23 @@ class SignUpDoctor extends Component {
     }
   };
 
+  pickerList() {
+    return (
+      <Picker
+        placeholder='Specialty'
+        selectedValue={this.state.specialty}
+        style={{ borderColor: '#eee', borderWidth: 1 }}
+        onValueChange={(itemValue, itemIndex) =>
+          this.setState({ specialty: itemValue })
+        }>
+        <Picker.Item label="Specialty" value="" color='#888'  />
+        <Picker.Item label="Dentistry" value="Dentistry" />
+        <Picker.Item label="Endocrinology" value="Endocrinology" />
+        <Picker.Item label="Oncology" value="Oncology" />
+      </Picker>
+
+    )
+  }
 
 
   render() {
@@ -139,7 +156,8 @@ class SignUpDoctor extends Component {
     } = this.state;
 
     return (
-      <TouchableWithoutFeedback style={styles.contanier} behavior='padding'>
+      <View style={styles.contanier}>
+      <TouchableWithoutFeedback behavior='padding'>
         <ScrollView style={{ marginHorizontal: 30, flex: 1 }} showsVerticalScrollIndicator={false}>
 
           <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -245,45 +263,9 @@ class SignUpDoctor extends Component {
             </View>
 
             <ScrollView style={styles.marginInput}>
-              <Picker
-                placeholder='Specialty'
-                selectedValue={this.state.specialty}
-                style={{ borderColor:'#eee', borderWidth: 1 }}
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({ specialty: itemValue })
-                }>
-                <Picker.Item label="Specialty .." value="" color='#888' />
-                <Picker.Item label="Dentistry" value="Dentistry" />
-                <Picker.Item label="Endocrinology" value="Endocrinology" />
-                <Picker.Item label="Cardiology" value="Cardiology" />
-                <Picker.Item label="Gastroenterology" value="Gastroenterology" />
-                <Picker.Item label="Obstetrics and Gynecology" value="Obstetrics and Gynecology" />
-                <Picker.Item label="Ophthalmology" value="Ophthalmology" />
-                <Picker.Item label="Pediatrics" value="Pediatrics" />
-                <Picker.Item label="Ear, nose and throat (ENT)" value="Ear, nose and throat (ENT)" />
-                <Picker.Item label="Neurology" value="Neurology" />
-                <Picker.Item label="Nephrology" value="Nephrology" />
-                <Picker.Item label="Oncology" value="Oncology" />
-                <Picker.Item label="Urology" value="Urology" />
-                <Picker.Item label="Dermatology" value="Dermatology" />
-                <Picker.Item label="Oncology" value="Oncology" />
-                <Picker.Item label="Allergy and immunology" value="Allergy and immunology" />
-                <Picker.Item label="Hematology" value="Hematology" />
-                <Picker.Item label="General Practitioner" value="General Practitioner" />
-                <Picker.Item label="Emergency medicine" value="Emergency medicine" />
-                <Picker.Item label="Psychiatry" value="Psychiatry" />
-                <Picker.Item label="Radiology" value="Radiology" />
-                <Picker.Item label="Family medicine" value="Family medicine" />
-                <Picker.Item label="Internal Medicine" value="Internal Medicine" />
-              </Picker>
-              {/* <TextInput
-                style={styles.input}
-                placeholder='Specialty'
-                placeholderTextColor='#888'
-                autoCapitalize='none'
-                onChangeText={(specialty) => { this.setState({ specialty }) }}
-                value={specialty}
-              /> */}
+
+              {this.pickerList()}
+
             </ScrollView>
 
 
@@ -372,6 +354,7 @@ class SignUpDoctor extends Component {
 
         </ScrollView>
       </TouchableWithoutFeedback>
+      </View>
     );
   };
 };
@@ -394,7 +377,7 @@ export default connect(mapStateToProps, { handelSignUpDoctor })(SignUpDoctor)
 const styles = StyleSheet.create({
   contanier: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: '#fff'
   },
   greeting: {
     marginTop: 20,
