@@ -1,20 +1,31 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View, ScrollView, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
+import {
+    Text,
+    StyleSheet,
+    View,
+    ScrollView,
+    FlatList,
+    Image,
+    TouchableOpacity,
+    Dimensions,
+    ActivityIndicator
+} from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import { Divider } from 'react-native-elements';
-import { isObject } from 'lodash';
+import { connect } from 'react-redux';
+
 
 import firebase from '../Firebase';
-import { specialty } from '../contacts';
+import { fetchSpecialty } from '../actions';
 
 
 const { height, width } = Dimensions.get('window')
+
 
 class Categories extends Component {
 
 
     state = {
-        categories: [],
         error: null,
         loading: false,
         specialty: []
@@ -22,7 +33,7 @@ class Categories extends Component {
 
 
     componentDidMount() {
-
+        // this.props.fetchSpecialty()
 
         firebase.database().ref('specialty').on('child_added', (val) => {
             let specialty = val.val();
@@ -34,21 +45,24 @@ class Categories extends Component {
                 }
             })
         })
-        this.setState({ categories: this.props.categories });
+
+        
+        
     }
 
 
 
     renderItem = ({ item }) => {
 
+
         return (
             <TouchableOpacity style={{ marginTop: 15 }} onPress={() => this.props.navigation.navigate('Specialty', { item })} >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-                    <View style={{ backgroundColor: '#1590f0', width: 100, height: 100, borderRadius: 7 }}>
+                    <View style={{  backgroundColor: '#1590f0', width: 100, height: 100, borderRadius: 7}}>
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginRight: 5 }}>
-                            <Image source={{ }}
-                                style={{ flex: 1, width: width / 4.1, height: height / 1, resizeMode: 'cover', borderRadius: 10, marginTop: 10 }}
+                            <Image source={{uri: item.image}}
+                                style={{ flex: 1, width: width / 4.1, height: height / 1, resizeMode: 'cover', borderRadius: 10}}
                             />
                         </View>
                     </View>
@@ -59,8 +73,8 @@ class Categories extends Component {
                     </View>
 
                 </View>
-                <View>
-                    <Divider style={{ width: width / 1.1 }} />
+                <View  style={{ alignItems: 'flex-end' }}>
+                    <Divider style={{ width: width / 1.66 }} />
                 </View>
             </TouchableOpacity>
         )
@@ -69,6 +83,10 @@ class Categories extends Component {
 
 
     render() {
+        // if(this.props.fetching) return <ActivityIndicator style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} size='large' />
+
+        // console.log(this.props.result);
+
         return (
             <View style={styles.logout}>
                 <View style={{ marginHorizontal: 15 }}>
@@ -99,13 +117,16 @@ class Categories extends Component {
     }
 }
 
-Categories.defaultProps = {
 
-    categories: specialty.categories,
-
+const mapStateToProps = ({ specialty }) => {
+    return {
+        fetching: specialty.fetching,
+        result: specialty.result
+    }
 }
 
-export default Categories;
+
+export default connect(mapStateToProps, { fetchSpecialty })(Categories);
 
 
 const styles = StyleSheet.create({

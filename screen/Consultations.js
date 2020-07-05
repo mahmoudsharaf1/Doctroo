@@ -13,6 +13,8 @@ import {
   FlatList
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { connect } from 'react-redux';
+
 import firebase from '../Firebase';
 
 const { width } = Dimensions.get("window");
@@ -21,7 +23,6 @@ class Consultations extends Component {
 
   state = {
     users: [],
-    dbRef: firebase.database().ref('messages'),
     active: 'Chats',
     xTabOne: 0,
     xTabTwo: 0,
@@ -31,21 +32,40 @@ class Consultations extends Component {
     translateY: -1000
   }
 
-
   componentWillMount() {
 
-    this.state.dbRef.on('child_added', (val) => {
-      let person = val.val();
-      person.uid = val.key;
-      console.log(person.uid)
+    const { profile } = this.props;
 
-      this.setState((prevState) => {
-        return {
-          users: [...prevState.users, person]
+    firebase.database().ref('messages').on('child_added', (val) => {
+        let person = val.val();
+        person.uid = val.key; 
+        if(person.uid === profile.uid){
+            profile.displayName = person.name
+            profile.photoURL = person.image ? person.image : null
+        }else {
+            this.setState((prevState) => {
+                return {
+                    users: [...prevState.users, person]
+                }
+            })
         }
-      })
     })
-  }
+}
+
+  // componentWillMount() {
+
+  //   firebase.database().ref('users').on('child_added', (val) => {
+  //     let person = val.val();
+  //     person.uid = val.key;
+  //     console.log(person.uid)
+
+  //     this.setState((prevState) => {
+  //       return {
+  //         users: [...prevState.users, person]
+  //       }
+  //     })
+  //   })
+  // }
 
 
   handleSlide = type => {
@@ -178,7 +198,6 @@ class Consultations extends Component {
 }
 
 
-export default Consultations;
 
 
 const styles = StyleSheet.create({
@@ -195,7 +214,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     marginTop: 38,
     flexDirection: 'row',
-
+    
   },
   tab: {
     marginRight: 25,
@@ -203,3 +222,17 @@ const styles = StyleSheet.create({
   },
 
 })
+
+const mapStateToProps = state => {
+  return {
+
+    loading: state.authProfile.loading,
+    error: state.authProfile.error,
+    signup: state.authProfile.signup,
+    profile: state.authProfile.profile,
+    login: state.authProfile.login,
+
+  }
+};
+
+  export default connect (mapStateToProps)(Consultations);

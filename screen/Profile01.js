@@ -46,10 +46,9 @@ class Profile01 extends Component {
         const chat = this.props.navigation.getParam('item');
         const user = this.props.profile;
 
-        console.log(user)
         return (
             <TouchableOpacity style={[styles.icons, { marginRight: 15, padding: 8 }]} onPress={() => this.props.navigation.navigate('ChatScreen', { chat, user })}>
-                <Ionicons name='ios-chatbubbles' size={23} style={{ color: '#1590f0'}}
+                <Ionicons name='ios-chatbubbles' size={18} style={{ color: '#1590f0'}}
                     accessibilityValue={this.state.users}
                 />
 
@@ -57,6 +56,9 @@ class Profile01 extends Component {
         )
     };
 
+    like() {
+        return <Favorites />
+    }
 
 
     render() {
@@ -85,9 +87,9 @@ class Profile01 extends Component {
 
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-                                <TouchableOpacity >
+                                <View >
                                     {this.renderRow()}
-                                </TouchableOpacity>
+                                </View>
                                 <Avatar
                                     size={85}
                                     rounded
@@ -95,7 +97,7 @@ class Profile01 extends Component {
 
                                 />
                                 <TouchableOpacity style={styles.icons}>
-                                    <FontAwesome name='heart-o' size={23} style={{ color: '#1590f0', top: 1.5 }} />
+                                    <FontAwesome  name='heart' size={18} style={{ color: '#ff0000', top: 1.5 }} />
                                 </TouchableOpacity>
                             </View>
 

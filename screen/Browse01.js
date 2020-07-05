@@ -7,7 +7,11 @@ import firebase from '../Firebase';
 import { specialty } from '../contacts';
 import Favorites from '../contacts/Favorites';
 
+
+
 const { height, width } = Dimensions.get('window')
+
+
 
 class Browse01 extends Component {
 
@@ -15,55 +19,42 @@ class Browse01 extends Component {
 
   state = {
     users: [],
-    categories: [],
     error: null,
     loading: false,
+    specialty: []
   }
 
 
   componentDidMount() {
 
-    this.handleItem();
 
-    firebase.database().ref('users/doctors/').on('child_added', (val) => {
-      let users = val.val();
-      users.uid = val.key;
+    firebase.database().ref('specialty').on('child_added', (val) => {
+      val.forEach((snapVal) => {
+        let users = snapVal.toJSON();
+        // users.uid = val.key
+        console.log(users)
+        this.setState((prevState) => {
+          return {
+            users: [...prevState.users, users]
+          }
+        })
+      })
+     
+    })
+
+    
+    firebase.database().ref('specialty').on('child_added', (val) => {
+      let specialty = val.val();
+      specialty.id = val.key;
 
       this.setState((prevState) => {
         return {
-          users: [...prevState.users, users]
+          specialty: [...prevState.specialty, specialty]
         }
       })
     })
-    this.setState({ categories: this.props.categories });
   }
 
-
-
-  handleItem = () => {
-    const { categories } = this.props;
-
-    this.setState({ loading: true })
-
-    const doctor = categories;
-    fetch(doctor).then((res) => res.toString())
-      .then((resJson) => {
-        this.setState({
-          loading: false,
-          categories: resJson
-        })
-
-      }).catch(error => {
-        this.setState({ error, loading: false })
-      })
-
-  }
-
-  addToFavorite() {
-    this.setState({
-      addedToFavorite: !this.state.addedToFavorite
-    });
-  }
 
   renderRowusers = ({ item }) => {
     return (
@@ -73,16 +64,18 @@ class Browse01 extends Component {
             style={{ borderRadius: 5 }}
             onPress={() => this.props.navigation.navigate('Profile01', { item })}
           >
-            <Favorites  />
+          <View style={{marginRight: 10}}>
+            <Favorites />
+          </View>
 
             <Image
               source={{ uri: item.photoURL }}
-              style={{ flex: 1, width: width / 1.1, height: height / 3, resizeMode: 'cover', borderRadius: 10, marginRight: 5, marginTop: 10 }}
+              style={{ flex: 1, width: width / 1.1, height: height / 2.6, resizeMode: 'cover', borderRadius: 10, marginRight: 5, marginTop: 10 }}
             />
           </TouchableOpacity>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 18, color: '#000', textAlign: 'center', marginTop: 10 }}>{item.displayName}</Text>
-            <Text style={{ fontSize: 18, color: '#000', textAlign: 'center', marginTop: 10 }}>${item.hourlyRate}/hr</Text>
+            <Text style={{ fontSize: 18, textAlign: 'center', marginTop: 10 }}>{item.displayName}</Text>
+            <Text style={{ fontSize: 18, textAlign: 'center', marginTop: 10 }}>${item.hourlyRate}/hr</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
             <Icon name='ios-pin' type='ionicon' size={15} color='#999' />
@@ -91,7 +84,6 @@ class Browse01 extends Component {
           </View>
 
           <View style={{ flexDirection: 'row', marginTop: 10 }}>
-            {/* <Text>{item.specialty} - </Text> */}
             <Text> {item.experience}
               <Text style={{ color: '#999' }}> Years Experience</Text>
             </Text>
@@ -105,21 +97,20 @@ class Browse01 extends Component {
 
   renderItem = ({ item, index }) => {
 
-    const { navigation } = this.props;
 
     return (
-      <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => navigation.navigate('Expoler', { item })}>
+      <TouchableOpacity style={{ marginLeft: 10 }}  onPress={() => this.props.navigation.navigate('Specialty', { item })}>
 
-        <View style={{ backgroundColor: '#1590f0', width: 100, height: 100, borderRadius: 7 }}>
+        <View style={{  backgroundColor: '#1590f0', width: 100, height: 100, borderRadius: 7 }}>
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Image source={item.images} />
+            <Image source={{ uri: item.image}} 
+               style={{  flex: 1, width: width / 4.1, height: height / 1, resizeMode: 'cover', borderRadius: 10, marginTop: 10 }}
+            />
           </View>
 
         </View>
-
         <View>
-          <Text style={{ fontWeight: '700' }}>{item.name}</Text>
-          <Text style={{ color: '#999' }}>{item.count} doctors</Text>
+          <Text style={{ fontWeight: 'bold' }}>{item.id}</Text>
         </View>
       </TouchableOpacity>
     )
@@ -134,10 +125,10 @@ class Browse01 extends Component {
         <View style={{ marginHorizontal: 10, top: 32 }}>
 
           <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate('Map')}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Icon name='ios-pin' type='ionicon' />
               <Text style={styles.location}>Location</Text>
-            </TouchableOpacity>
+            </View>
             <TouchableOpacity style={styles.search} onPress={() => navigation.navigate('Search')}>
               <Ionicons name='ios-search' size={25} style={styles.search} />
             </TouchableOpacity>
@@ -165,7 +156,7 @@ class Browse01 extends Component {
               <View style={styles.categories}>
                 <FlatList
                   horizontal
-                  data={this.state.categories}
+                  data={this.state.specialty}
                   renderItem={this.renderItem}
                   keyExtractor={(item) => item.uid}
                 />
@@ -239,7 +230,7 @@ const styles = StyleSheet.create({
   },
   seeAll: {
     textAlign: 'right',
-    color: '#006fff'
+    color: '#1590f0'
   },
   filter: {
     flexDirection: 'row',

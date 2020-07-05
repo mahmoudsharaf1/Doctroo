@@ -3,13 +3,20 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image , Switch, ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Icon, Divider} from 'react-native-elements';
+import { connect } from 'react-redux';
 
 import firebase from '../Firebase';
+import I18n from '../locales/i18n';
+import { changeLanguge } from '../actions';
 // create a component
 class Settings extends Component {
 
-    signout = () => {
-        firebase.auth().signOut()
+    componentWillMount() {
+        I18n.locale = this.props.locale;
+    }
+
+    logout = async () => {
+        await firebase.auth().signOut()
     }
 
 
@@ -48,7 +55,7 @@ class Settings extends Component {
                         </View>
                             <Divider style={{marginTop: 20, marginHorizontal: 20, marginRight: 20}}/>
                         
-                        <View style={styles.account}>
+                        {/* <View style={styles.account}>
                             <Image source={require('../images/privacy.png')} style={{ marginRight: 10}} />
                             <View style={styles.settings}>
                                 <Text style={styles.text}>Privacy Settings</Text>
@@ -57,13 +64,13 @@ class Settings extends Component {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                            <Divider style={{marginTop: 20, marginHorizontal: 20, marginRight: 20}}/>
+                            <Divider style={{marginTop: 20, marginHorizontal: 20, marginRight: 20}}/> */}
                         
                         <View style={styles.account}>
                             <Image source={require('../images/interface.png')} style={{ marginRight: 10}} />
                             <View style={styles.settings}>
                                 <Text style={styles.text}>Sign Out</Text>
-                                <TouchableOpacity onPress={this.signout}>
+                                <TouchableOpacity onPress={this.logout}>
                                     <Icon name='chevron-right' type='fontawesom' size={30} color='#999'/>
                                 </TouchableOpacity>
                             </View>
@@ -112,7 +119,7 @@ class Settings extends Component {
                            
                             <View style={styles.optionsLinked}>
                                 <Text style={styles.text}>Languages</Text>
-                                <TouchableOpacity style={{flexDirection: 'row'}}>
+                                <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => navigation.navigate('Language')} >
                                     <Text style={{top: 5, color: '#999'}}>English</Text>
                                     <Icon name='chevron-right' type='fontawesom' size={30} color='#999'/>
                                 </TouchableOpacity>
@@ -173,5 +180,12 @@ const styles = StyleSheet.create({
     }
 });
 
+
+const mapStateToProps = ({i18n}) => {
+    return {
+        locale: i18n.locale
+    }
+}
+
 //make this component available to the app
-export default Settings;
+export default connect ( mapStateToProps ,{changeLanguge})(Settings);

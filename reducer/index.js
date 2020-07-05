@@ -7,6 +7,7 @@ import specialty from './specialty_reducer';
 import organize from './organize_reducer';
 import meetings from './meeting_reducer';
 import location from './location_reducer';
+import i18n from './lang_reducer';
 
 
 export default combineReducers({
@@ -17,5 +18,6 @@ export default combineReducers({
     specialty,
     organize,
     meetings,
-    location
+    location,
+    i18n
 })

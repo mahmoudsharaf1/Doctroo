@@ -10,8 +10,8 @@ class Notifications extends Component {
             <View style={styles.container}>
                 <View style={{marginHorizontal: 15}}>
                 <View style={{flexDirection: 'row', marginTop: 30}}>
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => this.props.navigation.navigate('ChooseLocation')}>
-                        <Ionicons name='ios-more' size={20} style={styles.location}/>
+                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => this.props.navigation.goBack()}>
+                        <Ionicons name='ios-arrow-back' size={30} style={styles.location}/>
                     </TouchableOpacity>
                     <View style={styles.search}>
                         <Ionicons name='ios-funnel' size={25} style={styles.search}  />

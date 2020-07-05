@@ -17,7 +17,7 @@ export const facebooklogin =  () => {
         dispatch ({type: FB_ATTEMPTING});
 
             await Facebook.initializeAsync(FbConfig.appId)       
-            const {type,token } = await Facebook.logInWithReadPermissionsAsync({ permissions: ['public_profile'], });
+            const {type,token } = await Facebook.logInWithReadPermissionsAsync({ permissions: ['public_profile', 'user_location', 'user_hometown'], });
 
             if (type === 'success') {
                 finishlogin(dispatch, token);

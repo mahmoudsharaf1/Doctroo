@@ -2,10 +2,12 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Dimensions, Image } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
-import { Divider, Avatar } from 'react-native-elements';
+import { Divider, Icon, Avatar } from 'react-native-elements';
 
-import firebase from '../Firebase';
 import { isObject } from 'lodash';
+
+import Favorites from '../contacts/Favorites';
+import firebase from '../Firebase';
 
 
 const { height, width } = Dimensions.get('window')
@@ -30,14 +32,13 @@ class Specialty extends Component {
         for (let val in data) {
             if (isObject(data[val])) {
 
-
                 this.setState((prevState) => {
                     return {
                         data: [...prevState.data, data[val]]
                     }
                 });
 
-            }; 
+            };
         };
     };
 
@@ -46,30 +47,50 @@ class Specialty extends Component {
 
     renderItem = ({ item }) => {
 
-
+    
         return (
             <TouchableOpacity style={{ marginTop: 15 }} onPress={() => this.props.navigation.navigate('Profile01', { item })} >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
                     <View style={{ width: 100, height: 100, borderRadius: 7 }}>
 
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',  marginRight: 5 }}>
-                            <Image source={{ uri: item.photoURL }}
-                                style={{ flex: 1, width: width / 4.1, height: height / 1, resizeMode: 'cover', borderRadius: 10,marginTop: 10 }}
+                        <View style={{ flex: 1, marginRight: 5 }}>
+                            <Avatar
+                                rounded
+                                size={100}
+                                source={{ uri: item.photoURL }}
+                                style={{ flex: 1 }}
                             />
                         </View>
                     </View>
 
-                    <View style={{ marginLeft: 10 }}>
-                        <Text style={{ fontWeight: '700' }}>{item.displayName}</Text>
-                        <Text style={{ color: '#999', marginTop: 5 }}></Text>
-                    </View>
+                    <View style={{ marginLeft: 5, flex: 1 }}>
+                        <View style={{ marginTop: 10 }}>
+                            <Text style={{ fontWeight: '700' }}>{item.displayName}</Text>
 
+                            <View>
+                                <View>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Icon name='ios-pin' type='ionicon' size={15} color='#999' />
+                                        <Text style={{ color: '#777' }}> {item.address}</Text>
+                                    </View>
+                                    <Text style={{ color: '#777' }}> {item.specialty}</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text>${item.hourlyRate}/hr</Text>
+                                </View>
+                            </View>
+
+                        </View>
+                        <View style={{ flex: 1, bottom: 70 }}>
+                            <Favorites />
+                        </View>
+                    </View>
 
                 </View>
 
                 <View style={{ alignItems: 'flex-end' }}>
-                    <Divider style={{ width: width / 1.5 }} />
+                    <Divider style={{ width: width / 1.6 }} />
                 </View>
 
             </TouchableOpacity>
@@ -80,7 +101,7 @@ class Specialty extends Component {
 
     render() {
         const data = this.props.navigation.getParam('item')
-        
+
         return (
             <View style={styles.container}>
                 <View style={{ marginHorizontal: 15 }}>

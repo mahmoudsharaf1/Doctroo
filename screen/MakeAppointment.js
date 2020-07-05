@@ -115,8 +115,9 @@ class MakeAppointments extends Component {
                                 <Text>Consultation</Text>
                                 <CheckBox
                                     style={{ marginRight: 7 }}
+                                    color={Consultation ? '#6CDC17' : '#888'}
                                     onPress={() => this.ConsultationClick()}
-                                    checked={this.state.Consultation}
+                                    checked={Consultation}
 
                                 />
                             </View>
@@ -125,8 +126,9 @@ class MakeAppointments extends Component {
                                 <Text>Treatment</Text>
                                 <CheckBox
                                     style={{ marginRight: 7 }}
+                                    color={Treatment ? '#6CDC17' : '#888'}
                                     onPress={() => this.TreatmentClick()}
-                                    checked={this.state.Treatment}
+                                    checked={Treatment}
                                 />
                             </View>
                             <Divider style={styles.divider} />

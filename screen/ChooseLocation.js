@@ -51,8 +51,7 @@ class ChooseLocation extends Component {
 
     setLocation() {
         const { address, latitude, longitude } = this.state;
-        const location = {  address, latitude, longitude}
-        this.props.savelocation(location);
+        this.props.savelocation({address, latitude, longitude});
         
     }
 

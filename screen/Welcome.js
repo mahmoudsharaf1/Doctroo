@@ -21,16 +21,11 @@ class Welcome extends Component {
         }
     }
 
-    signIn = () => {
 
+    signIn = () => {
+        
         const { email, password } = this.state;
         this.props.signIn({ email, password });
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.token) {
-            this.props.navigation.navigate('App');
-        }
     }
 
     loginWithFacebook() {
@@ -46,10 +41,12 @@ class Welcome extends Component {
 
 
     render() {
+        const { email, password, treatment } = this.state;
+        
         return (
             <ScrollView style={styles.contanier}>
 
-                <View style={{ marginTop: 30, marginHorizontal: 30, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between'  }}>
+                <View style={{ marginTop: 30, marginHorizontal: 30, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={styles.greeting} color='#1590f0'>{`Welcome\nback`}</Text>
                     <View style={styles.photoPlaceholder}>
                         <Image source={require('../images/life.png')} style={styles.photo} />
@@ -63,7 +60,7 @@ class Welcome extends Component {
                 <View style={{ justifyContent: 'center', marginHorizontal: 30, marginTop: 10 }}>
                     <Text>Sign in to continue</Text>
 
-                    <TouchableOpacity style={{}}
+                    <TouchableOpacity
                         onPress={() => this.props.navigation.navigate('SignUpDoctor')}>
                         <Text style={{ color: 'gray', fontSize: 13, fontWeight: 'bold' }}>
                             Create account for a Doctor <Text style={{ color: '#1590f0', fontSize: 15 }}> Sign Up</Text>
@@ -79,7 +76,7 @@ class Welcome extends Component {
                                 autoCapitalize='none'
                                 keyboardType='email-address'
                                 onChangeText={email => this.setState({ email })}
-                                value={this.state.email}
+                                value={email}
                             />
                         </View>
 
@@ -90,7 +87,7 @@ class Welcome extends Component {
                                 autoCapitalize='none'
                                 secureTextEntry
                                 onChangeText={password => this.setState({ password })}
-                                value={this.state.password}
+                                value={password}
                             />
                         </View>
 
@@ -106,8 +103,9 @@ class Welcome extends Component {
                     >
                         <View style={{ flexDirection: 'row' }}>
                             <CheckBox
+                                color={treatment ? '#6CDC17' : '#888'}
                                 onPress={() => this.treatmentClick()}
-                                checked={this.state.treatment}
+                                checked={treatment}
                             />
                             <Text style={{ color: '#999', marginLeft: 15 }} >Remmber me</Text>
                         </View>
@@ -132,12 +130,12 @@ class Welcome extends Component {
 
 
                     </View>
-                <TouchableOpacity style={styles.signup}
-                    onPress={() => this.props.navigation.navigate('CreateAccount')}>
-                    <Text style={{ color: 'gray', fontSize: 13, fontWeight: 'bold' }}>
-                        Don't have an account <Text style={{ color: '#1590f0', fontSize: 15 }}> Sign Up</Text>
-                    </Text>
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.signup}
+                        onPress={() => this.props.navigation.navigate('CreateAccount')}>
+                        <Text style={{ color: 'gray', fontSize: 13, fontWeight: 'bold' }}>
+                            Don't have an account <Text style={{ color: '#1590f0', fontSize: 15 }}> Sign Up</Text>
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         )
@@ -209,7 +207,7 @@ const styles = StyleSheet.create({
         position: 'relative',
         alignSelf: 'center',
         marginTop: 30
-      },
+    },
 })
 
 const mapStateToProps = ({ auth, authProfile }) => {

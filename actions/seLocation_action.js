@@ -6,7 +6,7 @@ import {
     LOCATION_FAILED
 } from './type';
 
-export const savelocation = (location) => {
+export const savelocation = ({address, latitude, longitude}) => {
     
 
     return async(dispatch) => {
@@ -17,7 +17,7 @@ export const savelocation = (location) => {
 
             let uid = firebase.auth().currentUser.uid
 
-            await firebase.database().ref('users/profiles/').child(uid).push(location)
+            await firebase.database().ref('users/profiles/').push({address, latitude, longitude})
 
             dispatch({ type: LOCATION_SUCCESS });
 

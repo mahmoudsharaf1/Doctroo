@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
@@ -27,21 +27,22 @@ class CreateAccount extends Component {
       photoURL: null,
       displayName: '',
       email: '',
+      address: '',
       phone: '',
-      password: ''
+      password: '',
     }
   }
 
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.handelSignUp) {
+    if (!nextProps.handelSignUp) {
       this.props.navigation.navigate('Welcome');
     }
   }
 
   signUp() {
-    const { displayName, email, password, phone, photoURL } = this.state;
-    this.props.handelSignUp({ displayName, email, password, phone, photoURL });
+    const { displayName, email, address, password, phone, photoURL } = this.state;
+    this.props.handelSignUp({ displayName, email, address, password, phone, photoURL });
   }
 
   componentDidMount() {
@@ -77,24 +78,26 @@ class CreateAccount extends Component {
 
   render() {
 
-    const { displayName, email, password, phone, photoURL } = this.state;
+    const { displayName, email, address, password, phone, photoURL } = this.state;
 
     return (
       <View style={styles.contanier}>
         <TouchableWithoutFeedback>
-          <ScrollView showsVerticalScrollIndicator={false} style={{ marginHorizontal: 30 }}>
+          <ScrollView showsVerticalScrollIndicator={false} style={{ marginHorizontal: 30, marginTop: 30 }}>
 
             <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={styles.greeting}>{`Welcome\nUser`}</Text>
 
-              <TouchableOpacity style={styles.photoPlaceholder} onPress={this._pickImage} >
-                {photoURL && <Image  source={ photoURL ?  { uri: photoURL } : require('../images/unnamed.png')} style={styles.photo} />}
-                <Ionicons
-                  displayName='ios-add'
-                  size={40}
-                  color='#FFF'
+              <View>
+                <TouchableOpacity style={styles.edit} onPress={this._pickImage} >
+                  <MaterialIcons name='edit' size={15} style={{ color: '#fff' }} />
+                </TouchableOpacity>
+                <Image
+                  style={{ width: 100, height: 100, borderRadius: 50 }}
+                  source={photoURL ? { uri: photoURL } : require('../images/unnamed.png')}
                 />
-              </TouchableOpacity>
+              </View>
+
             </View>
 
             <Text>Sign Up to join</Text>
@@ -104,7 +107,7 @@ class CreateAccount extends Component {
               <View style={styles.marginInput}>
                 <TextInput
                   style={styles.input}
-                  placeholder='Username'
+                  placeholder='Full name'
                   onChangeText={(displayName) => { this.setState({ displayName }) }}
                   value={displayName}
                 />
@@ -122,6 +125,15 @@ class CreateAccount extends Component {
                 />
               </View>
 
+              <View style={styles.marginInput}>
+                <TextInput
+                  style={styles.input}
+                  placeholder='Address'
+                  autoCapitalize='none'
+                  onChangeText={(address) => { this.setState({ address }) }}
+                  value={address}
+                />
+              </View>
 
               <SafeAreaView style={{ flex: 1 }}>
                 <View style={{ justifyContent: 'center', flex: 1, borderBottomWidth: 1 }}>
@@ -149,20 +161,20 @@ class CreateAccount extends Component {
 
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={() => this.signUp(displayName, email, password, phone, photoURL)}>
+            <TouchableOpacity style={styles.button} onPress={() => this.signUp(displayName, email, address, password, phone, photoURL)}>
               <Text style={{ color: '#FFF', fontWeight: '500' }}>Sign Up</Text>
             </TouchableOpacity>
-      
-        <TouchableOpacity style={styles.buttoncontainer}
-          onPress={() => this.props.navigation.navigate('Welcome')}>
-          <Text style={{ color: 'gray', fontSize: 13, fontWeight: 'bold' }}>
-            Have an account? <Text style={{ color: '#1690f0', fontSize: 15 }}> Sign in</Text>
-          </Text>
-        </TouchableOpacity>
+
+            <TouchableOpacity style={styles.buttoncontainer}
+              onPress={() => this.props.navigation.navigate('Welcome')}>
+              <Text style={{ color: 'gray', fontSize: 13, fontWeight: 'bold' }}>
+                Have an account? <Text style={{ color: '#1690f0', fontSize: 15 }}> Sign in</Text>
+              </Text>
+            </TouchableOpacity>
           </ScrollView>
 
         </TouchableWithoutFeedback>
-        
+
       </View>
     );
   };
@@ -209,14 +221,18 @@ const styles = StyleSheet.create({
     elevation: 1,
     marginTop: 15
   },
-  photoPlaceholder: {
-    width: 79,
-    height: 79,
-    borderRadius: 50,
-    backgroundColor: 'gray',
-    marginTop: 32,
+  edit: {
+    position: 'absolute',
+    zIndex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#6CDC17',
+    width: 30,
+    height: 30,
+    borderRadius: 30,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignSelf: 'flex-end',
+    marginTop: 65
   },
   photo: {
     position: 'absolute',

@@ -135,7 +135,7 @@ class Appointments extends Component {
               <Ionicons name='ios-search' size={30} style={styles.iconSearch} />
             </View>
           </View>
-          <Text style={{ top: 23, fontSize: 25, fontWeight: 'bold' }}>Appointments</Text>
+          <Text style={{ top: 23, fontSize: 32, fontWeight: 'bold' }}>Appointments</Text>
 
           <View style={styles.tabs}>
             <Animated.View

@@ -3,8 +3,6 @@ import {
     SIGNIN_ATTEMPING_DOCTOR,
     SIGNUP_FAILED_DOCTOR,
     SIGNIN_SUCCESS_DOCTOR,
-    LOGIN_SUCCESS_DOCTOR,
-    REFRESH_USERS_DOCTOR
 } from '../actions/type';
 
 const INITIAL_STATE = {
@@ -28,11 +26,6 @@ export default (state = INITIAL_STATE, action) => {
         case SIGNIN_SUCCESS_DOCTOR:
             return { ...state, loading: false, signup: true }
 
-        case LOGIN_SUCCESS_DOCTOR:
-            return { ...state, loading: false, profile: action.payload, error: '', login: action.login }
-
-        case REFRESH_USERS_DOCTOR:
-            return { ...state, profile: action.payload.profile }
 
         default:
             return state;

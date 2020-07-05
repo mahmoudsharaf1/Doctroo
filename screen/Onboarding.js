@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {  StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 
-import Swiper from 'react-native-swiper'
+import Swiper from 'react-native-swiper';
 
 
 export default class Onboarding extends Component {
@@ -11,9 +11,9 @@ export default class Onboarding extends Component {
   render() {
       return (
         <View style={{flex: 1, backgroundColor: '#fff'}}>
-            <View style={{flex: 1, marginHorizontal: 15, marginTop: 32}}>
+            <View style={{flex: 1, marginHorizontal: 15, marginTop: 60}}>
 
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('SetLocation')}>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('Welcome')}>
                     <Text style={{textAlign: 'right', color: '#1590f0', fontSize: 15, marginRight: 8}}>Skip</Text>
                 </TouchableOpacity>
 
@@ -62,7 +62,7 @@ export default class Onboarding extends Component {
                 </View>
                 
             </View>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('SetLocation')} style={{bottom: 43, marginRight: 15}}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('Welcome')} style={{bottom: 43, marginRight: 15}}>
                 <Text style={{ textAlign: 'right',fontSize: 15, color: '#1590f0', marginRight: 8}}>Get started</Text>
             </TouchableOpacity>
       </View>
@@ -84,10 +84,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 17
     },
     text: {
-      color: '#111',
       fontSize: 30,
       fontWeight: 'bold',
-      textAlign: 'justify',
+    //   textAlign: 'center',
       marginTop: 10
     },
     discription: {

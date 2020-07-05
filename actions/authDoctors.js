@@ -6,9 +6,6 @@ import {
     SIGNUP_FAILED_DOCTOR, 
     SIGNIN_SUCCESS_DOCTOR ,
     
-    GET_SPECIALTY_ATTEMPING,
-    GET_SPECIALTY_SUCCESS,
-    GET_SPECIALTY_FAILED
 } from './type';
 
 
@@ -38,7 +35,7 @@ export const handelSignUpDoctor = ({
             firebase.auth().createUserWithEmailAndPassword(email, password).then(resp => {
 
 
-                firebase.database().ref('users/doctors/' + resp.user.uid).set({
+                firebase.database().ref('users/profiles/' + resp.user.uid).set({
                     displayName,
                     email,
                     password,
@@ -52,10 +49,12 @@ export const handelSignUpDoctor = ({
                     experience,
                     addressSchool,
                     awards,
-                    uid: resp.user.uid
+                    uid: resp.user.uid,
+                    type: 'vendor'
                 })
                     .then((resp) => {
                         AsyncStorage.setItem('uid', resp.user.uid);
+                        AsyncStorage.setItem('type', 'vendor');
 
                         dispatch({
                             type: SIGNIN_SUCCESS_DOCTOR, payload: {
@@ -72,7 +71,8 @@ export const handelSignUpDoctor = ({
                                 experience,
                                 addressSchool,
                                 awards,
-                                uid: resp.user.uid
+                                uid: resp.user.uid,
+                                type: 'vendor'
                             }, payload2: null
                         })
                     })
@@ -96,6 +96,7 @@ export const handelSignUpDoctor = ({
                 })
                     .then((resp) => {
                         AsyncStorage.setItem('uid', resp.user.uid);
+                        AsyncStorage.setItem('type', 'vendor');
 
                         dispatch({
                             type: SIGNIN_SUCCESS_DOCTOR, payload: {

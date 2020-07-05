@@ -1,0 +1,17 @@
+[
+    {
+        "id": 0,
+        "locale": "ar",
+        "name": "العربية"
+    },
+    {
+        "id": 1,
+        "locale": "en",
+        "name": "English"
+    },
+    {
+        "id": 3,
+        "locale": "ko",
+        "name": "한국어"
+    }
+]

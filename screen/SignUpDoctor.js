@@ -44,8 +44,9 @@ class SignUpDoctor extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.loading) {
+    if (nextProps.handelSignUp) {
       this.props.navigation.navigate('Auth');
+      Alert.alert('Successfully')
     }
   }
 
@@ -125,12 +126,12 @@ class SignUpDoctor extends Component {
         selectedValue={this.state.specialty}
         style={{ borderColor: '#eee', borderWidth: 1 }}
         onValueChange={(itemValue, itemIndex) =>
-          this.setState({ specialty: itemValue })
-        }>
-        <Picker.Item label="Specialty" value="" color='#888'  />
-        <Picker.Item label="Dentistry" value="Dentistry" />
-        <Picker.Item label="Endocrinology" value="Endocrinology" />
-        <Picker.Item label="Oncology" value="Oncology" />
+          this.setState({ specialty: itemValue }) }>
+            
+        <Picker.Item label="Specialty" value="" color='#888' />
+        <Picker.Item label="Cardiology" value="Dentistry" />
+        <Picker.Item label="Neurology" value="Neurology" />
+        <Picker.Item label="Thoracic" value="Thoracic" />
       </Picker>
 
     )
@@ -157,203 +158,193 @@ class SignUpDoctor extends Component {
 
     return (
       <View style={styles.contanier}>
-      <TouchableWithoutFeedback behavior='padding'>
-        <ScrollView style={{ marginHorizontal: 30, flex: 1 }} showsVerticalScrollIndicator={false}>
+        <TouchableWithoutFeedback behavior='padding'>
+          <ScrollView style={{ marginHorizontal: 30, flex: 1 }} showsVerticalScrollIndicator={false}>
 
-          <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={styles.greeting}>{`Welcome\nDoctor`}</Text>
+            <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={styles.greeting}>{`Welcome\nDoctor`}</Text>
 
-            <TouchableOpacity style={styles.photoPlaceholder} onPress={this._pickImage} >
-              {photoURL && <Image source={photoURL ? { uri: photoURL } : require('../images/unnamed.png')} style={styles.photo} />}
-              <Ionicons
-                displayName='ios-add'
-                size={40}
-                color='#FFF'
-              />
-            </TouchableOpacity>
-          </View>
-
-          <Text>Sign Up to join</Text>
-
-
-          <View style={styles.form}>
-
-
-
-            <View>
-              <TextInput
-                placeholder='Username'
-                placeholderTextColor='#888'
-                style={styles.input}
-                onChangeText={(displayName) => { this.setState({ displayName }) }}
-                value={displayName}
-              />
+              <TouchableOpacity style={styles.photoPlaceholder} onPress={this._pickImage} >
+                {photoURL && <Image source={photoURL ? { uri: photoURL } : require('../images/unnamed.png')} style={styles.photo} />}
+                <Ionicons
+                  displayName='ios-add'
+                  size={40}
+                  color='#FFF'
+                />
+              </TouchableOpacity>
             </View>
 
+            <Text>Sign Up to join</Text>
 
-            <View style={styles.marginInput}>
-              <TextInput
-                style={styles.input}
-                placeholder='Email'
-                placeholderTextColor='#888'
-                autoCapitalize='none'
-                keyboardType='email-address'
-                onChangeText={(email) => { this.setState({ email }) }}
-                value={email}
-              />
-            </View>
 
-            <View style={styles.marginInput}>
-              <TextInput
-                style={styles.input}
-                placeholder='Address'
-                placeholderTextColor='#888'
-                autoCapitalize='none'
-                onChangeText={(address) => { this.setState({ address }) }}
-                value={address}
-              />
-            </View>
+            <View style={styles.form}>
 
 
 
-            <View style={styles.marginInput}>
-              <TextInput
-                style={styles.input}
-                placeholder='Medical school'
-                placeholderTextColor='#888'
-                autoCapitalize='none'
-                onChangeText={(medicalSchool) => { this.setState({ medicalSchool }) }}
-                value={medicalSchool}
-              />
-            </View>
-
-
-            <View style={styles.marginInput}>
-              <TextInput
-                style={styles.input}
-                placeholder='Address Medical School'
-                placeholderTextColor='#888'
-                autoCapitalize='none'
-                onChangeText={(addressSchool) => { this.setState({ addressSchool }) }}
-                value={addressSchool}
-              />
-            </View>
-
-            <View style={styles.marginInput}>
-              <TextInput
-                style={styles.input}
-                placeholder='Awards'
-                placeholderTextColor='#888'
-                autoCapitalize='none'
-                onChangeText={(awards) => { this.setState({ awards }) }}
-                value={awards}
-              />
-            </View>
-
-
-            <View style={styles.marginInput}>
-              <TextInput
-                style={styles.input}
-                placeholder='Education'
-                placeholderTextColor='#888'
-                autoCapitalize='none'
-                onChangeText={(education) => { this.setState({ education }) }}
-                value={education}
-              />
-            </View>
-
-            <ScrollView style={styles.marginInput}>
-
-              {this.pickerList()}
-
-            </ScrollView>
-
-
-
-
-            <View style={{ marginTop: 15, flexDirection: 'row', justifyContent: 'space-between' }}>
-              <TextInput
-                style={{
-                  backgroundColor: '#eee',
-                  padding: 10,
-                  borderRadius: 6,
-                  width: 146,
-                  marginRight: 7
-                }}
-                placeholder='Years Experience'
-                placeholderTextColor='#888'
-                keyboardType='number-pad'
-                onChangeText={(experience) => { this.setState({ experience }) }}
-                value={experience}
-              />
-              <TextInput
-                style={{
-                  backgroundColor: '#eee',
-                  padding: 10,
-                  borderRadius: 6,
-                  width: 146,
-                  marginLeft: 3
-                }}
-                placeholder='Hourly rate $'
-                placeholderTextColor='#888'
-                keyboardType='number-pad'
-                onChangeText={(hourlyRate) => { this.setState({ hourlyRate }) }}
-                value={hourlyRate}
-              />
-            </View>
-
-            <SafeAreaView style={{ flex: 1 }}>
-              <View style={{ justifyContent: 'center', flex: 1, borderBottomWidth: 1 }}>
-                <IntlPhoneInput
+              <View>
+                <TextInput
+                  placeholder='Full name'
                   style={styles.input}
-                  placeholder='Mobile'
-                  defaultCountry="EG"
-                  onChangeText={(phone) => { this.setState({ phone }) }}
-                  value={phone}
+                  onChangeText={(displayName) => { this.setState({ displayName }) }}
+                  value={displayName}
                 />
               </View>
-            </SafeAreaView>
 
 
-            <View style={styles.marginInput}>
-              <TextInput
-                style={styles.input}
-                autoCapitalize='none'
-                placeholder='Password'
-                placeholderTextColor='#888'
-                secureTextEntry
-                onChangeText={(password) => { this.setState({ password }) }}
-                value={password}
-              />
+              <View style={styles.marginInput}>
+                <TextInput
+                  style={styles.input}
+                  placeholder='Email'
+                  autoCapitalize='none'
+                  keyboardType='email-address'
+                  onChangeText={(email) => { this.setState({ email }) }}
+                  value={email}
+                />
+              </View>
+
+              <View style={styles.marginInput}>
+                <TextInput
+                  style={styles.input}
+                  placeholder='Address'
+                  autoCapitalize='none'
+                  onChangeText={(address) => { this.setState({ address }) }}
+                  value={address}
+                />
+              </View>
+
+
+
+              <View style={styles.marginInput}>
+                <TextInput
+                  style={styles.input}
+                  placeholder='Medical school'
+                  autoCapitalize='none'
+                  onChangeText={(medicalSchool) => { this.setState({ medicalSchool }) }}
+                  value={medicalSchool}
+                />
+              </View>
+
+
+              <View style={styles.marginInput}>
+                <TextInput
+                  style={styles.input}
+                  placeholder='Address Medical School'
+                  autoCapitalize='none'
+                  onChangeText={(addressSchool) => { this.setState({ addressSchool }) }}
+                  value={addressSchool}
+                />
+              </View>
+
+              <View style={styles.marginInput}>
+                <TextInput
+                  style={styles.input}
+                  placeholder='Awards'
+                  autoCapitalize='none'
+                  onChangeText={(awards) => { this.setState({ awards }) }}
+                  value={awards}
+                />
+              </View>
+
+
+              <View style={styles.marginInput}>
+                <TextInput
+                  style={styles.input}
+                  placeholder='Education'
+                  autoCapitalize='none'
+                  onChangeText={(education) => { this.setState({ education }) }}
+                  value={education}
+                />
+              </View>
+
+              <ScrollView style={styles.marginInput}>
+
+                {this.pickerList()}
+
+              </ScrollView>
+
+
+
+
+              <View style={{ marginTop: 15, flexDirection: 'row', justifyContent: 'space-between' }}>
+                <TextInput
+                  style={{
+                    backgroundColor: '#eee',
+                    padding: 10,
+                    borderRadius: 6,
+                    width: 146,
+                    marginRight: 7
+                  }}
+                  placeholder='Years Experience'
+                  keyboardType='number-pad'
+                  onChangeText={(experience) => { this.setState({ experience }) }}
+                  value={experience}
+                />
+                <TextInput
+                  style={{
+                    backgroundColor: '#eee',
+                    padding: 10,
+                    borderRadius: 6,
+                    width: 146,
+                    marginLeft: 3
+                  }}
+                  placeholder='Hourly rate $'
+                  keyboardType='number-pad'
+                  onChangeText={(hourlyRate) => { this.setState({ hourlyRate }) }}
+                  value={hourlyRate}
+                />
+              </View>
+
+              <SafeAreaView style={{ flex: 1 }}>
+                <View style={{ justifyContent: 'center', flex: 1, borderBottomWidth: 1 }}>
+                  <IntlPhoneInput
+                    style={styles.input}
+                    placeholder='Mobile'
+                    defaultCountry="EG"
+                    onChangeText={(phone) => { this.setState({ phone }) }}
+                    value={phone}
+                  />
+                </View>
+              </SafeAreaView>
+
+
+              <View style={styles.marginInput}>
+                <TextInput
+                  style={styles.input}
+                  autoCapitalize='none'
+                  placeholder='Password'
+                  secureTextEntry
+                  onChangeText={(password) => { this.setState({ password }) }}
+                  value={password}
+                />
+              </View>
+
             </View>
 
-          </View>
 
 
 
+            <TouchableOpacity style={styles.button}
+              onPress={() => this.signUp(
+                displayName,
+                email,
+                password,
+                phone,
+                photoURL,
+                medicalSchool,
+                education,
+                specialty,
+                hourlyRate,
+                address,
+                experience,
+                addressSchool,
+                awards
+              )}>
+              <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Sign Up</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button}
-            onPress={() => this.signUp(
-              displayName,
-              email,
-              password,
-              phone,
-              photoURL,
-              medicalSchool,
-              education,
-              specialty,
-              hourlyRate,
-              address,
-              experience,
-              addressSchool,
-              awards
-            )}>
-            <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Sign Up</Text>
-          </TouchableOpacity>
 
-
-        </ScrollView>
-      </TouchableWithoutFeedback>
+          </ScrollView>
+        </TouchableWithoutFeedback>
       </View>
     );
   };

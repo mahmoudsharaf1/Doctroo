@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { StackNavigationProp } from '@react-navigation/stack';
 declare type Props = {
     navigation: StackNavigationProp<{}>;
