@@ -44,9 +44,8 @@ class SignUpDoctor extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.handelSignUp) {
-      this.props.navigation.navigate('Auth');
-      Alert.alert('Successfully')
+    if (nextProps.signup) {
+      this.props.navigation.navigate('Welcome');
     }
   }
 
