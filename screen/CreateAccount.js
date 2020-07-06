@@ -35,7 +35,7 @@ class CreateAccount extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.handelSignUp) {
+    if (nextProps.signup) {
       this.props.navigation.navigate('Welcome');
     }
   }
