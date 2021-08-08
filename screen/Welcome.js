@@ -1,11 +1,23 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View, TouchableOpacity, TextInput, Image, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import {
+    Text,
+    StyleSheet,
+    View,
+    TouchableOpacity,
+    TextInput,
+    Image,
+    ScrollView,
+    Dimensions,
+    Alert
+} from 'react-native';
 import { Icon } from 'react-native-elements';
 import { CheckBox } from 'native-base';
 import { connect } from 'react-redux';
 
 import { signIn } from '../actions';
 import { facebooklogin } from '../actions';
+
+const { width, height } = Dimensions.get('window');
 
 class Welcome extends Component {
 
@@ -17,32 +29,34 @@ class Welcome extends Component {
             password: '',
             disabled: false,
             errorMessage: false,
-            treatment: false
+            treatment: false,
         }
     }
 
+    async componentWillMount() {
+        await navigator.geolocation.getCurrentPosition((position) => { });
+    };
 
     signIn = () => {
-        
         const { email, password } = this.state;
         this.props.signIn({ email, password });
-    }
+    };
 
     loginWithFacebook() {
         this.props.facebooklogin();
-    }
-
+    };
 
     treatmentClick() {
         this.setState({
             treatment: true
-        })
-    }
+        });
+    };
 
 
     render() {
         const { email, password, treatment } = this.state;
-        
+        const { navigation, loading } = this.props;
+        console.log(this.props.err)
         return (
             <ScrollView style={styles.contanier}>
 
@@ -54,21 +68,21 @@ class Welcome extends Component {
                     </View>
                 </View>
 
-
-
-
                 <View style={{ justifyContent: 'center', marginHorizontal: 30, marginTop: 10 }}>
                     <Text>Sign in to continue</Text>
 
                     <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('SignUpDoctor')}>
+                        onPress={() => navigation.navigate('SignUpDoctor')}>
                         <Text style={{ color: 'gray', fontSize: 13, fontWeight: 'bold' }}>
                             Create account for a Doctor <Text style={{ color: '#1590f0', fontSize: 15 }}> Sign Up</Text>
                         </Text>
                     </TouchableOpacity>
 
+                    <View style={{ marginTop: 15 }}>
+                        {this.props.err && <Text style={{ color: '#E9445f' }} >{this.props.err}</Text>}
+                    </View>
 
-                    <View style={styles.form}>
+                    <View style={{ marginTop: 30 }}>
                         <View>
                             <TextInput
                                 placeholder='Email'
@@ -97,25 +111,28 @@ class Welcome extends Component {
                     <View style={{
                         flexDirection: 'row',
                         justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginTop: 20
+                        marginTop: 20,
+                        width: width / 1.2
                     }}
                     >
-                        <View style={{ flexDirection: 'row' }}>
+
+                        <View style={{ flexDirection: 'row', marginHorizontal: -5 }}>
                             <CheckBox
                                 color={treatment ? '#6CDC17' : '#888'}
                                 onPress={() => this.treatmentClick()}
                                 checked={treatment}
+                                style={{marginRight: 15}}
                             />
-                            <Text style={{ color: '#999', marginLeft: 15 }} >Remmber me</Text>
+                            <Text style={{ color: '#999'}} >Remmber me</Text>
                         </View>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgetPassword')}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ForgetPassword')}>
                             <Text style={{ color: '#999' }}>ForgetPassword?</Text>
                         </TouchableOpacity>
                     </View>
 
+
                     <View style={{ marginTop: 30 }}>
-                        <TouchableOpacity style={styles.button} onPress={this.signIn} loading={this.props.loading}>
+                        <TouchableOpacity style={styles.button} onPress={this.signIn} loading={loading}>
                             <Text style={{ color: '#FFF', fontWeight: '500', fontSize: 16 }}>Sign In</Text>
                         </TouchableOpacity>
 
@@ -131,7 +148,7 @@ class Welcome extends Component {
 
                     </View>
                     <TouchableOpacity style={styles.signup}
-                        onPress={() => this.props.navigation.navigate('CreateAccount')}>
+                        onPress={() => navigation.navigate('CreateAccount')}>
                         <Text style={{ color: 'gray', fontSize: 13, fontWeight: 'bold' }}>
                             Don't have an account <Text style={{ color: '#1590f0', fontSize: 15 }}> Sign Up</Text>
                         </Text>
@@ -171,15 +188,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         elevation: 1,
     },
-    form: {
-        marginTop: 30,
-        alignItems: 'center'
-    },
     input: {
         backgroundColor: '#eee',
-        padding: 10,
+        padding: 15,
         borderRadius: 6,
-        width: 300
+        width: width / 1.2
     },
     buttoncontainer: {
         position: 'absolute',
@@ -216,7 +229,7 @@ const mapStateToProps = ({ auth, authProfile }) => {
         token: auth.token,
 
         loading: authProfile.loading,
-        error: authProfile.error,
+        err: authProfile.err,
         signup: authProfile.signup,
         profile: authProfile.profile,
         login: authProfile.login,

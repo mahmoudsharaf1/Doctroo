@@ -9,8 +9,8 @@ class Notifications extends Component {
         return (
             <View style={styles.container}>
                 <View style={{marginHorizontal: 15}}>
-                <View style={{flexDirection: 'row', marginTop: 30}}>
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => this.props.navigation.goBack()}>
+                <View style={{flexDirection: 'row', marginTop: 30, alignItems: 'center'}}>
+                    <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => this.props.navigation.goBack()}>
                         <Ionicons name='ios-arrow-back' size={30} style={styles.location}/>
                     </TouchableOpacity>
                     <View style={styles.search}>
@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
       location: {
         flexDirection: 'row',
         textAlign: 'left',
+        alignItems: 'center'
     },
 });
 

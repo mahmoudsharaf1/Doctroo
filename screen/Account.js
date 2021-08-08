@@ -27,11 +27,13 @@ class Account extends Component {
         quality: 1,
       });
       if (!result.cancelled) {
+
         const photo = result.uri
         const { profile } = this.props;
-        firebase.database().ref('users/profiles/').child(profile.uid).child('photoURL').set(photo)
+        firebase.database().ref('users/profiles/').child(profile.uid).child('photoURL').set(photo);
         this.setState({ photo: result.uri });
-        Alert.alert('Change')
+        Alert.alert('Change');
+
       }
     } catch (E) {
       console.log(E);
@@ -46,7 +48,7 @@ class Account extends Component {
     const { photo } = this.state;
     return (
       <View style={styles.container}>
-        <View style={{ backgroundColor: '#f1f1f1', height: '30%' }}>
+        <View style={{ backgroundColor: '#f1f1f1' }}>
           <View style={{ marginHorizontal: 15, marginTop: 32 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
 
@@ -61,7 +63,7 @@ class Account extends Component {
             </View>
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 15, marginTop: 30 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 15, marginTop: 30, marginBottom: 18 }}>
             <View>
               <TouchableOpacity style={styles.edit} onPress={this._pickImage} >
                 <MaterialIcons name='edit' size={15} style={{ color: '#fff' }} />
@@ -117,12 +119,21 @@ class Account extends Component {
           </View>
           <View style={{ marginHorizontal: 15, marginTop: 15 }}>
             <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Payment Cards</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', top: 29 }}>
-              <Text>Home</Text>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', top: 29, alignItems: 'center' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View>
+                  <Image source={require('../images/visa.png')} style={{ height: 30, width: 30, borderWidth: .5 }} />
+                </View>
+                <View>
+                  <Text>  Oscar's card</Text>
+                  <Text style={{  color: '#999', marginLeft: 7, marginTop: 5}}>999**** **** ****</Text>
+                </View>
+              </View>
               <Icon name='chevron-right' type='fontawesom' size={30} color='#999' />
             </View>
-            <Text style={{ marginTop: 20, color: '#999', textAlign: 'left' }}>999**** **** ****</Text>
-            <Divider style={{ marginTop: 15 }} />
+
+            <Divider style={{ marginTop: 40 }} />
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15 }}>
               <Text style={{ color: '#1690f5', fontSize: 15 }}>Add new Card</Text>
@@ -160,17 +171,9 @@ const styles = StyleSheet.create({
 });
 
 
-const mapStateToProps = state => {
+const mapStateToProps = ({ authProfile }) => {
   return {
-
-    profile: state.auth.profile,
-
-    loading: state.authProfile.loading,
-    error: state.authProfile.error,
-    signup: state.authProfile.signup,
-    profile: state.authProfile.profile,
-    login: state.authProfile.login,
-
+    profile: authProfile.profile
   }
 };
 

@@ -123,7 +123,8 @@ const TabStack = createStackNavigator(
             Loading: LoadingScreen,
             Onboarding,
             Auth: AuthStack,
-            App: AppStack
+            App: AppStack,
+            
         },
         {
             initialRouteName: 'Loading'

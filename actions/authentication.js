@@ -1,37 +1,42 @@
 import { AsyncStorage } from 'react-native';
 import firebase from '../Firebase';
 
-import { SIGNIN_ATTEMPING, SIGNUP_FAILED, SIGNIN_SUCCESS, LOGIN_SUCCESS } from './type';
+import {
+    SIGNIN_ATTEMPING,
+    SIGNUP_FAILED,
+    SIGNIN_SUCCESS,
+
+    LOGIN_ATTEMPING,
+    LOGIN_SUCCESS,
+    LOGIN_FAILED
+} from './type';
 
 
-export const handelSignUp = ({ displayName, email, address, password, phone, photoURL }) => {
+
+export const handelSignUp = ({ displayName, email, address, password, phone, photoURL, location }) => {
 
     return async (dispatch) => {
-        try {
-            dispatch({ type: SIGNIN_ATTEMPING })
+
+        dispatch({ type: SIGNIN_ATTEMPING })
+
+        // const uid = firebase.auth().currentUser.uid;
+        // firebase.database().ref('users/profiles/').child(uid).child('photoURL').set(photo)
+
+        firebase.auth().createUserWithEmailAndPassword(email, password).then(resp => {
 
 
+            firebase.database().ref('users/profiles/' + resp.user.uid).set({ displayName, email, address, password, phone, photoURL, location, uid: resp.user.uid })
+                .then((response) => {
+                    AsyncStorage.setItem('uid', resp.user.uid);
 
-            firebase.auth().createUserWithEmailAndPassword(email, password).then(resp => {
-
-
-                firebase.database().ref('users/profiles/' + resp.user.uid).set({ displayName, email, address, password, phone, photoURL, uid: resp.user.uid, type: 'user' })
-                    .then((resp) => {
-                        AsyncStorage.setItem('uid', resp.user.uid);
-                        AsyncStorage.setItem('type', 'user');
-
-                        dispatch({
-                            type: SIGNIN_SUCCESS, payload: { displayName, email, address, password, phone, photoURL, uid: resp.user.uid, type: 'user' }, payload2: null
-                        })
+                    dispatch({
+                        type: SIGNIN_SUCCESS, payload: { displayName, email, address, password, phone, photoURL, location, uid: resp.user.uid }, payload2: null
                     })
-            }).catch(error => {
-                dispatch({ type: SIGNUP_FAILED, error: '' })
-            })
-        } catch (err) {
-            console.log(err)
-        }
+                })
+        }).catch(error => {
+            dispatch({ type: SIGNUP_FAILED, payload: error.message })
+        })
     }
-
 };
 
 
@@ -44,28 +49,25 @@ export const signIn = ({ email, password }) => {
 
     return async (dispatch) => {
 
-        dispatch({ type: SIGNIN_ATTEMPING });
+        dispatch({ type: LOGIN_ATTEMPING });
 
-        console.log(SIGNIN_ATTEMPING)
+
         firebase.auth().signInWithEmailAndPassword(email, password).then(resp => {
 
             firebase.database().ref('users/profiles').child(resp.user.uid).on('value', (snapshot) => {
                 const profile = snapshot.val();
                 AsyncStorage.setItem('uid', resp.user.uid);
-                // AsyncStorage.setItem('type', 'user');
 
                 dispatch({
                     type: LOGIN_SUCCESS, payload: profile
                 });
 
             })
-
-
         }).catch(err => {
-            dispatch({ type: SIGNUP_FAILED, payload: err.message });
+            dispatch({ type: LOGIN_FAILED, payload: err.message });
 
-        })
+        });
 
-    }
+    };
 
-}
+};

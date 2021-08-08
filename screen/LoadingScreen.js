@@ -6,52 +6,61 @@ import firebase from '../Firebase';
 
 export default class LoadingScreen extends Component {
 
-      constructor(props) {
-        super(props);
-        this.getLocation();
-        // AsyncStorage.removeItem('type')
-        // this.startApp();
-    }
+  constructor(props) {
+    super(props);
 
-    async getLocation () {
-      try{
-          
-          const { status } = await Permissions.askAsync(Permissions.LOCATION);
-          if (status !== 'granted') {
-              console.log(' permisstion denid ');
-          }
-
-      } catch (e) {
-          console.log(e);
-      }
   }
 
-    componentDidMount() {
-      firebase.auth().onAuthStateChanged(user => {
-        this.props.navigation.navigate(user ? 'App' : 'Auth')
-      })
-    }
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      this.props.navigation.navigate(user ? 'App' : 'Auth')
+    })
+    // this.getLocation();
+  };
 
-    // async startApp() {
-    //     try {
-    //     const token = await AsyncStorage.getItem('type');
-    //         if (token) {
-    //             this.props.navigation.navigate('App')
-    //         } else {
-    //             this.props.navigation.navigate('Auth')    
-    //         }
-    //     } catch (e) {
-    //         console.log(e)
-    //     }
-    // };
+
+  // getLocation = async () => {
+  //   try {
+
+  //     await navigator.geolocation.getCurrentPosition((position) => {
+
+  //       this.setState({
+  //         latitude: position.coords.latitude,
+  //         longitude: position.coords.longitude,
+  //         error: null,
+  //       });
+
+  //       console.log(position.coords.latitude)
+  //       console.log(position.coords.longitude)
+  //     },
+  //       (error) => this.setState({ error: error.message }),
+  //       { enableHighAccuracy: true, timeout: 3000, maximumAge: 1000 }
+  //     );
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  // async startApp() {
+  //     try {
+  //     const token = await AsyncStorage.getItem('type');
+  //         if (token) {
+  //             this.props.navigation.navigate('App')
+  //         } else {
+  //             this.props.navigation.navigate('Auth')    
+  //         }
+  //     } catch (e) {
+  //         console.log(e)
+  //     }
+  // };
 
   render() {
     return (
       <View style={styles.contanier}>
         <Image
-          style={{ flex: 1, width: '100%'}} 
+          style={{ flex: 1, width: '100%' }}
           source={require('../images/photoApp/logo.png')}
-          // startApp={this.startApp.bind(this)} 
+        // startApp={this.startApp.bind(this)} 
         />
       </View>
     )

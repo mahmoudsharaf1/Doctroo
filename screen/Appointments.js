@@ -8,8 +8,7 @@ import {
   ScrollView,
   Image,
   Dimensions,
-  FlatList,
-  ActivityIndicator
+  FlatList
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
@@ -25,7 +24,6 @@ class Appointments extends Component {
 
   state = {
     users: [],
-    dbRef: firebase.database().ref('meeting'),
     active: 'Upcoming',
     xTabOne: 0,
     xTabTwo: 0,
@@ -36,8 +34,8 @@ class Appointments extends Component {
   }
 
   componentWillMount() {
-    const uid = firebase.auth().currentUser.uid
-    this.state.dbRef.child(uid).on('child_added', (val) => {
+    const {profile} = this.props
+    firebase.database().ref('meeting').child(profile.uid).on('child_added', (val) => {
       let person = val.val();
       person.uid = val.key;
 
@@ -50,17 +48,17 @@ class Appointments extends Component {
   }
 
   renderRow = ({ item }) => {
-    
+
     return (
       <TouchableOpacity
         onPress={() => this.props.navigation.navigate('Details', { item })}
         style={{ flexDirection: 'row', marginTop: 15 }}>
         <Image
-          source={{ uri: item.profileDoctor.photoURL }}
-          style={{ width: 80, height: 80, resizeMode: 'cover', borderRadius: 50, marginRight: 10 }}
+          source={item.profileDoctor ? { uri: item.profileDoctor.photoURL } : { uri: item.profile.photoURL }}
+          style={{ width: 75, height: 75, resizeMode: 'cover', borderRadius: 50, marginRight: 10 }}
         />
         <View>
-          <Text style={{ fontSize: 18, color: '#000', fontWeight: 'bold' }}>{item.profileDoctor.displayName}</Text>
+          <Text style={{ fontSize: 18, color: '#000', fontWeight: 'bold' }}>{item.profileDoctor ? item.profileDoctor.displayName : item.profile.displayName}</Text>
           <Text style={{ fontSize: 15, color: '#000' }}>{item.meeting.selected}</Text>
           <Text style={{ fontSize: 13, color: '#999' }}>{item.meeting.time}</Text>
         </View>
@@ -71,7 +69,6 @@ class Appointments extends Component {
 
   componentDidMount() {
     this.props.fetchMeeting()
-
   }
 
   handleSlide = type => {
@@ -85,28 +82,33 @@ class Appointments extends Component {
     } = this.state;
     Animated.spring(translateX, {
       toValue: type,
-      duration: 100
+      duration: 100,
+      useNativeDriver: true
     }).start();
     if (active === 0) {
       Animated.parallel([
         Animated.spring(translateXTabOne, {
           toValue: 0,
-          duration: 100
+          duration: 100,
+          useNativeDriver: true
         }).start(),
         Animated.spring(translateXTabTwo, {
           toValue: width,
-          duration: 100
+          duration: 100,
+          useNativeDriver: true
         }).start()
       ]);
     } else {
       Animated.parallel([
         Animated.spring(translateXTabOne, {
           toValue: -width,
-          duration: 100
+          duration: 100,
+          useNativeDriver: true
         }).start(),
         Animated.spring(translateXTabTwo, {
           toValue: 0,
-          duration: 100
+          duration: 100,
+          useNativeDriver: true
         }).start()
       ]);
     }
@@ -124,48 +126,49 @@ class Appointments extends Component {
       translateXTabTwo,
       translateY
     } = this.state;
-    
 
+    console.log(this.state.users)
     return (
       <View style={styles.contanier}>
-        <View style={{ marginHorizontal: 13, top: 32 }}>
-          <View style={{ flexDirection: 'row' }}>
+        <View style={{ top: 32 }}>
+          <View style={{ flexDirection: 'row', marginHorizontal: 13 }}>
             <Ionicons name='ios-arrow-back' size={30} />
             <View style={styles.iconSearch}>
               <Ionicons name='ios-search' size={30} style={styles.iconSearch} />
             </View>
           </View>
-          <Text style={{ top: 23, fontSize: 32, fontWeight: 'bold' }}>Appointments</Text>
 
-          <View style={styles.tabs}>
-            <Animated.View
-              style={{
-                position: "absolute",
-                width: "18%",
-                height: "100%",
-                top: 0,
-                left: 0,
-                borderBottomWidth: 3,
-                borderBottomColor: '#1590f0',
-                transform: [{ translateX }],
+            <Text style={{ top: 23, fontSize: 32, fontWeight: 'bold', marginHorizontal: 13 }}>Appointments</Text>
+          <View>
+            <View style={styles.tabs}>
+              <Animated.View
+                style={{
+                  position: "absolute",
+                  width: "16%",
+                  height: "100%",
+                  top: 0,
+                  left: 5,
+                  borderBottomWidth: 3,
+                  borderBottomColor: '#1590f0',
+                  transform: [{ translateX }],
+                }}
+              />
 
-              }}
-            />
+              <TouchableOpacity style={styles.tab}
+                onLayout={event => this.setState({ xTabOne: event.nativeEvent.layout.x })}
+                onPress={() => this.setState({ active: 0 }, () => this.handleSlide(xTabOne))}
+              >
 
-            <TouchableOpacity style={styles.tab}
-              onLayout={event => this.setState({ xTabOne: event.nativeEvent.layout.x })}
-              onPress={() => this.setState({ active: 0 }, () => this.handleSlide(xTabOne))}
-            >
+                <Text style={{ color: '#000' }}>Upcoming</Text>
+              </TouchableOpacity>
 
-              <Text style={{ color: '#000' }}>Upcoming</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.tab}
-              onLayout={event => this.setState({ xTabTwo: event.nativeEvent.layout.x })}
-              onPress={() => this.setState({ active: 1 }, () => this.handleSlide(xTabTwo))}
-            >
-              <Text style={{ color: '#000' }}>Previous</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.tab}
+                onLayout={event => this.setState({ xTabTwo: event.nativeEvent.layout.x })}
+                onPress={() => this.setState({ active: 1 }, () => this.handleSlide(xTabTwo))}
+              >
+                <Text style={{ color: '#000' }}>Previous</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
         </View>
@@ -209,19 +212,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     marginTop: 38,
     flexDirection: 'row',
-
+    marginHorizontal: 13
   },
   tab: {
-    marginRight: 25,
+    marginRight: 21,
     paddingBottom: 18
   },
 
 })
 
-const mapStateToProps = ({ meetings }) => {
+const mapStateToProps = ({ meetings, authProfile }) => {
   return {
     fetching: meetings.fetching,
-    result: meetings.result
+    result: meetings.result,
+    profile: authProfile.profile
   }
 }
 

@@ -16,7 +16,11 @@ class Settings extends Component {
     }
 
     logout = async () => {
-        await firebase.auth().signOut()
+        await firebase.auth().signOut().then(function() {
+            // Sign-out successful.
+          }).catch(function(error) {
+            // An error happened.
+          });
     }
 
 
@@ -82,8 +86,8 @@ class Settings extends Component {
                             <View style={styles.options}>
                                 <Text style={styles.text}>Newsletter</Text>
                                 <Switch
-                                    // trackColor={{ false: "#fff1f1", true: "#1590f0" }}
-                                    value={true}
+                                    trackColor={{ false: "#E1E1E1", true: "#1590f0" }}
+                                    value={false}
                                 />
                             </View>
  

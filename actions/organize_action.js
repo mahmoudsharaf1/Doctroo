@@ -6,7 +6,7 @@ import {
     ORGANIZE_FAILED
 } from './type';
 
-export const saveMeeting = (meeting) => {
+export const saveMeeting = ({meetingUser, meetingDoctor, id}) => {
     
 
     return async(dispatch) => {
@@ -15,7 +15,8 @@ export const saveMeeting = (meeting) => {
 
         try{
             let uid = firebase.auth().currentUser.uid
-            await firebase.database().ref('meeting').child(uid).push(meeting)
+            await firebase.database().ref('meeting').child(uid).push(meetingUser);
+            await firebase.database().ref('meeting').child(id).push(meetingDoctor);
 
             dispatch({ type: ORGANIZE_SUCCESS });
 

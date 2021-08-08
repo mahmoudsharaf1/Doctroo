@@ -8,10 +8,12 @@ import {
     Image,
     Alert,
     Modal,
-    TouchableHighlight
+    TouchableHighlight,
+    ScrollView
 } from 'react-native';
 import { Icon, Divider } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
+import MapView, {Marker} from 'react-native-maps';
 
 import firebase from '../Firebase';
 
@@ -29,7 +31,7 @@ class Details extends Component {
 
     componentWillMount() {
         const detail = this.props.navigation.getParam('item');
-console.log(detail)
+        
         this.state.dbRef.on('child_added', (val) => {
             let person = val.val();
             person.uid = val.key;
@@ -69,10 +71,10 @@ console.log(detail)
 
     renderRow = () => {
         const detail = this.props.navigation.getParam('item');
-        const chat = detail.profileDoctor;
-        const user = detail.profile;
+        const doctor = detail.profileDoctor ? detail.profileDoctor : detail.profile;
+        const user = detail.profileDoctor ? detail.profileDoctor : detail.profile;
         return (
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatScreen', {chat, user})}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatScreen', { doctor, user })}>
                 <Ionicons name='ios-chatbubbles' size={23} style={{ color: '#1590f0' }}
                     accessibilityValue={this.state.users}
                 />
@@ -85,9 +87,16 @@ console.log(detail)
         const detail = this.props.navigation.getParam('item');
         const { modalVisible } = this.state;
         const { order } = this.state;
-        
+
+        const initialRegion = {
+            latitude: detail.profileDoctor ? detail.profileDoctor.location.latitude : detail.profile.location.latitude,
+            longitude: detail.profileDoctor ? detail.profileDoctor.location.longitude : detail.profile.location.longitude,
+            latitudeDelta: 0.00050,
+            longitudeDelta: 0.00035
+        };
+
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <View>
                     <View style={{ marginHorizontal: 15 }}>
 
@@ -101,12 +110,12 @@ console.log(detail)
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 40 }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Image
-                                    source={{ uri: detail.profileDoctor.photoURL }}
+                                    source={detail.profileDoctor ? { uri: detail.profileDoctor.photoURL } : { uri: detail.profile.photoURL }}
                                     style={{ width: 65, height: 65, resizeMode: 'cover', borderRadius: 50, marginRight: 10 }}
                                 />
 
                                 <View>
-                                    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{detail.profileDoctor.displayName}</Text>
+                                    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{detail.profileDoctor ? detail.profileDoctor.displayName : detail.profile.displayName}</Text>
                                     <Text style={styles.confirmed}>  Confirmed  </Text>
                                 </View>
                             </View>
@@ -125,14 +134,15 @@ console.log(detail)
                                         transparent={true}
                                         visible={modalVisible}
                                         onRequestClose={() => {
-                                            Alert.alert("Modal has been closed.");
+                                            Alert.alert("Phone has been closed.");
                                         }}
+                                        
                                     >
                                         <View style={styles.modalView}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Ionicons name='ios-call' size={30} style={{ color: '#32CD32', bottom: 5 }} />
-                                                <Text style={styles.modalText}>{detail.profileDoctor.phone.dialCode}</Text>
-                                                <Text style={styles.modalText}> {detail.profileDoctor.phone.phoneNumber}</Text>
+                                                <Text style={styles.modalText}>{detail.profileDoctor ? detail.profileDoctor.phone.dialCode : detail.profile.phone.dialCode}</Text>
+                                                <Text style={styles.modalText}>{detail.profileDoctor ? detail.profileDoctor.phone.phoneNumber : detail.profile.phone.phoneNumber}</Text>
                                             </View>
                                             <TouchableHighlight
                                                 style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
@@ -167,32 +177,47 @@ console.log(detail)
                                 <View style={styles.settings}>
                                     <Text style={styles.title}>{detail.meeting.time}</Text>
                                 </View>
-                                <Divider style={styles.divider} />
+
                             </View>
 
-                            <View style={styles.detail}>
+                            <View style={[styles.detail, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+                                <View>
+                                    <Text style={styles.title}>Address</Text>
 
-                                <Text style={styles.title}>Address</Text>
+                                    <View style={styles.settings}>
+                                        <Text style={styles.data}>{detail.profileDoctor ? detail.profileDoctor.address : detail.profile.address}</Text>
+                                    </View>
+                                    <View style={styles.settings}>
+                                        <Text style={styles.title}>0.31 mi away</Text>
+                                    </View>
+                                </View>
 
-                                <View style={styles.settings}>
-                                    <Text style={styles.data}>{detail.profileDoctor.address}</Text>
+                                <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                                    <MapView
+                                        style={{ flex: 1, height: 100, width: 100 }}
+                                        initialRegion={initialRegion}
+                                        cacheEnabled
+                                        scrollEnabled={false}
+                                    >
+                                        <Marker
+                                            coordinate={initialRegion}
+                                            pinColor='#E9445f'
+                                        />
+                                    </MapView>
                                 </View>
-                                <View style={styles.settings}>
-                                    <Text style={styles.title}>0.31 mi away</Text>
-                                </View>
-                                <Divider style={styles.divider} />
+
                             </View>
 
                             <View style={styles.detail}>
                                 <Text style={styles.title}>Fee</Text>
 
                                 <View style={styles.settings}>
-                                    <Text style={styles.data}>Total prize ${detail.profileDoctor.hourlyRate}</Text>
+                                    <Text style={styles.data}>Total prize ${detail.profileDoctor ? detail.profileDoctor.hourlyRate : detail.profile.hourlyRate }</Text>
                                 </View>
                                 <View style={styles.settings}>
-                                    <Text style={styles.title}>For 30 minutes</Text>
+                                    <Text style={styles.title}>For 1 hour</Text>
                                 </View>
-                                <Divider style={styles.divider} />
+
                             </View>
 
                             <View style={styles.detail}>
@@ -204,7 +229,7 @@ console.log(detail)
                                 <View style={styles.settings}>
                                     <Text style={styles.title}>Any kind of {order}</Text>
                                 </View>
-                                <Divider style={styles.divider} />
+
                             </View>
 
                             <View style={styles.detail}>
@@ -216,7 +241,7 @@ console.log(detail)
                                 <View style={styles.settings}>
                                     <Text style={styles.title}>Repeat off</Text>
                                 </View>
-                                <Divider style={styles.divider} />
+
                             </View>
 
 
@@ -228,7 +253,7 @@ console.log(detail)
                         </View>
                     </View>
                 </View>
-            </View>
+            </ScrollView>
         );
     }
 }
@@ -297,9 +322,6 @@ const styles = StyleSheet.create({
     },
     detail: {
         marginTop: 20
-    },
-    divider: {
-        marginTop: 5
     },
     btnContainer: {
         flexDirection: 'row',

@@ -100,7 +100,6 @@ const Countries = [
     { ru:"Ирак",lt:"Irakas",tr:"Irak", en: 'Iraq',flag: '🇮🇶',code: 'IQ', dialCode: '+964', mask: '9999 999 9999' },
     { ru:"Ирландия",lt:"Airija",tr:"İrlanda", en: 'Ireland',flag: '🇮🇪',code: 'IE', dialCode: '+353', mask: '999 999 9999' },
     { ru:"Остров Мэн",lt:"Meno sala",tr:"Man Adası", en: 'Isle of Man',flag: '🇮🇲',code: 'IM', dialCode: '+44', mask: '99999 999999' },
-    { ru:"Израиль",lt:"Izraelis",tr:"İsrail", en: 'Israel',flag: '🇮🇱',code: 'IL', dialCode: '+972', mask: '999-999-9999' },
     { ru:"Италия",lt:"Italijoje",tr:"İtalya", en: 'Italy',flag: '🇮🇹',code: 'IT', dialCode: '+39', mask: '999 999 9999' },
     { ru:"Ямайка",lt:"Jamaika",tr:"Jamaika", en: 'Jamaica',flag: '🇯🇲',code: 'JM', dialCode: '+1876', mask: '(999) 999-9999' },
     { ru:"Япония",lt:"Japonija",tr:"Japonya", en: 'Japan',flag: '🇯🇵',code: 'JP', dialCode: '+81', mask: '999-9999-9999' },

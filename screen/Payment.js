@@ -1,12 +1,12 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, TouchableWithoutFeedback, ScrollView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CheckBox } from 'native-base';
 import Stripe from 'react-native-stripe-api';
 import { connect } from 'react-redux';
 
-import firebase from '../Firebase';
+const { width, height } = Dimensions.get('window');
 
 // create a component
 class Payment extends Component {
@@ -41,13 +41,13 @@ class Payment extends Component {
     };
 
     addCard() {
-        
+
         const { number, card_holder, exp_month, exp_year, cvc } = this.state;
         const apiKey = 'sk_test_51H1VX5DyFzaVSXEMw7ESrW4dixU24H5JcgIOrw2ze24RZaVuxxj4yJdmXYlXBY4AJ528sM1j4mYRxlsNmnUcwpuK004WqpMGIa';
         const client = new Stripe(apiKey);
         const token = client.createToken({ number, exp_month, exp_year, cvc, }).then((resp) => {
             console.log(resp)
-            
+
         }).catch((err) => {
             console.log(err)
         })
@@ -67,10 +67,11 @@ class Payment extends Component {
                                 </TouchableOpacity>
                                 <Text>Add New</Text>
                             </View>
-                            <Text style={{ top: 15, fontSize: 32, fontWeight: 'bold' }}>Payment</Text>
+                            <Text style={{ top: 10, fontSize: 32, fontWeight: 'bold' }}>Payment</Text>
                         </View>
 
-                        <View style={{ marginTop: 30, backgroundColor: '#eee' }}>
+                        <View style={{ marginTop: 15, backgroundColor: '#eee' }}>
+
                             <View style={styles.payment}>
 
                                 <Text style={{ textAlign: 'center', bottom: 40, color: '#888' }}>choose your payment method</Text>
@@ -88,21 +89,20 @@ class Payment extends Component {
 
                                     </View>
 
-
                                 </View>
                                 <View style={styles.checkBoxContainer}>
                                     <CheckBox
-                                        color={visa ? '#6CDC17' : '#888'}
+                                        color={visa ? '#6CDC17' : '#999'}
                                         onPress={() => this.visa()}
                                         checked={visa}
                                     />
                                     <CheckBox
-                                        color={payPal ? '#6CDC17' : '#888'}
+                                        color={payPal ? '#6CDC17' : '#999'}
                                         onPress={() => this.payPal()}
                                         checked={payPal}
                                     />
                                     <CheckBox
-                                        color={applePay ? '#6CDC17' : '#888'}
+                                        color={applePay ? '#6CDC17' : '#999'}
                                         onPress={() => this.applePay()}
                                         checked={applePay}
                                     />
@@ -125,69 +125,51 @@ class Payment extends Component {
                                 <TextInput
                                     style={styles.input}
                                     placeholder='Card Holder'
-                                    autoCapitalize= 'none'
+                                    autoCapitalize='none'
                                     onChangeText={(card_holder) => { this.setState({ card_holder }) }}
                                     value={card_holder}
                                 />
                             </View>
 
 
-                            <View style={styles.marginInput}>
-                            </View>
-                            <View style={{ marginTop: 15, flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <TextInput
-                                    style={{
-                                        backgroundColor: '#eee',
-                                        padding: 10,
-                                        borderRadius: 6,
-                                        width: 105,
-                                        marginRight: 7
-                                    }}
+                                    style={styles.inputBox}
                                     placeholder='Expires/ YY'
                                     keyboardType='number-pad'
                                     onChangeText={(exp_year) => { this.setState({ exp_year }) }}
                                     value={exp_year}
                                 />
                                 <TextInput
-                                    style={{
-                                        backgroundColor: '#eee',
-                                        padding: 10,
-                                        borderRadius: 6,
-                                        width: 105,
-                                        marginRight: 7
-                                    }}
+                                    style={styles.inputBox}
                                     placeholder='Expires/ MM'
                                     keyboardType='number-pad'
                                     onChangeText={(exp_month) => { this.setState({ exp_month }) }}
                                     value={exp_month}
                                 />
                                 <TextInput
-                                    style={{
-                                        backgroundColor: '#eee',
-                                        padding: 10,
-                                        borderRadius: 6,
-                                        width: 105,
-                                        marginLeft: 3
-                                    }}
+                                    style={styles.inputBox}
                                     placeholder='CVC'
                                     keyboardType='number-pad'
                                     onChangeText={(cvc) => { this.setState({ cvc }) }}
                                     value={cvc}
                                 />
                             </View>
+
+
+                            <View style={{ marginTop: 25, flexDirection: 'row', alignSelf: 'flex-start', marginHorizontal: 8 }}>
+                                <CheckBox
+                                    color={saveCredite ? '#6CDC17' : '#888'}
+                                    onPress={() => this.saveCredite()}
+                                    checked={saveCredite}
+                                />
+                                <Text style={{ color: '#888', marginLeft: 20 }}>Save credite information</Text>
+                            </View>
                         </View>
 
-                        <View style={{ marginTop: 25, flexDirection: 'row', marginHorizontal: 8 }}>
-                            <CheckBox
-                                color={saveCredite ? '#6CDC17' : '#888'}
-                                onPress={() => this.saveCredite()}
-                                checked={saveCredite}
-                            />
-                            <Text style={{ color: '#888', marginLeft: 20 }}>Save credite information</Text>
-                        </View>
 
                         <TouchableOpacity style={styles.button} onPress={this.addCard.bind(this)} >
-                            <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Sign Up</Text>
+                            <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Save</Text>
                         </TouchableOpacity>
                     </ScrollView>
                 </TouchableWithoutFeedback>
@@ -227,7 +209,7 @@ const styles = StyleSheet.create({
     checkBoxContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 20,
+        marginTop: 15,
         marginHorizontal: 15,
         marginRight: 35,
         marginBottom: 20
@@ -235,15 +217,14 @@ const styles = StyleSheet.create({
     input: {
         backgroundColor: '#eee',
         padding: 10,
-        borderRadius: 6,
-        width: 330,
+        borderRadius: 10,
+        width: width / 1.1,
     },
     marginInput: {
-        marginTop: 15
+        marginTop: 10
     },
     inputContainer: {
         marginTop: 10,
-        marginHorizontal: 5,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -257,24 +238,31 @@ const styles = StyleSheet.create({
         marginTop: 50,
         marginHorizontal: 15,
     },
+    inputBox: {
+        backgroundColor: '#eee',
+        padding: 10,
+        borderRadius: 6,
+        width: width / 3.38,
+        marginLeft: 3
+    }
 });
 
 
 const mapStateToProps = state => {
     return {
-  
-      profile: state.auth.profile,
-  
-      loading: state.authProfile.loading,
-      error: state.authProfile.error,
-      signup: state.authProfile.signup,
-      profile: state.authProfile.profile,
-      login: state.authProfile.login,
-  
+
+        profile: state.auth.profile,
+
+        loading: state.authProfile.loading,
+        error: state.authProfile.error,
+        signup: state.authProfile.signup,
+        profile: state.authProfile.profile,
+        login: state.authProfile.login,
+
     }
-  };
-  
-  export default connect(mapStateToProps)(Payment);
-  
+};
+
+export default connect(mapStateToProps)(Payment);
+
 //make this component available to the app
 // export default Payment;

@@ -75,7 +75,7 @@ class Search extends Component {
 
 
   renderFooter = () => {
-    if (this.state.loading) return null
+    if (!this.state.loading) return null
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator animating size='large' />

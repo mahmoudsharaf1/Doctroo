@@ -33,7 +33,6 @@ class Categories extends Component {
 
 
     componentDidMount() {
-        // this.props.fetchSpecialty()
 
         firebase.database().ref('specialty').on('child_added', (val) => {
             let specialty = val.val();

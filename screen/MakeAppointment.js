@@ -51,9 +51,18 @@ class MakeAppointments extends Component {
                 key={`menu-${menu}`}
                 onPress={() => this.setState({ time: menu })}
                 style={[styles.menu, isActive ? styles.time : null]}
+                style={{
+                    backgroundColor: isActive ? '#1590f0' : '#fff',
+                    borderColor: '#1590f0',
+                    borderWidth: .7,
+                    paddingVertical: 2,
+                    paddingHorizontal:5,
+                    borderRadius: 15,
+                    marginRight: 10
+                }}
             >
-                <Text gray={!isActive} lightSlateBlue={isActive}
-                    style={{ color: isActive, padding: 3, textAlign: 'center' }} > {menu} </Text>
+                <Text
+                    style={{ color: isActive ? '#fff' : '#1590f0', padding: 3, textAlign: 'center' }} > {menu} </Text>
             </TouchableOpacity>
         );
     }
@@ -66,7 +75,7 @@ class MakeAppointments extends Component {
 
         const meeting = { Consultation, Treatment, selected, time }
 
-        const doctor = this.props.navigation.getParam('profile')
+        const doctor = this.props.navigation.getParam('doctors')
 
         return (
             <View style={styles.container}>

@@ -1,10 +1,20 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View, ScrollView, FlatList, Image, TouchableOpacity, Dimensions } from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  ScrollView,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+  ActivityIndicator
+} from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import { Icon, Divider } from 'react-native-elements';
+import { connect } from 'react-redux';
 
 import firebase from '../Firebase';
-import { specialty } from '../contacts';
 import Favorites from '../contacts/Favorites';
 
 
@@ -21,28 +31,30 @@ class Browse01 extends Component {
     users: [],
     error: null,
     loading: false,
-    specialty: []
+    specialty: [],
+    latitude: null,
+    longitude: null
   }
 
 
   componentDidMount() {
-
+    this.getLocation();
+    this.clearProfileDoctor();
 
     firebase.database().ref('specialty').on('child_added', (val) => {
       val.forEach((snapVal) => {
         let users = snapVal.toJSON();
         // users.uid = val.key
-        console.log(users)
+        // console.log(users)
         this.setState((prevState) => {
           return {
             users: [...prevState.users, users]
           }
         })
       })
-     
+
     })
 
-    
     firebase.database().ref('specialty').on('child_added', (val) => {
       let specialty = val.val();
       specialty.id = val.key;
@@ -56,17 +68,49 @@ class Browse01 extends Component {
   }
 
 
+  getLocation = async () => {
+    try {
+
+      await navigator.geolocation.getCurrentPosition((position) => {
+
+        this.setState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          error: null,
+        });
+        // console.log(position.coords.latitude)
+        // console.log(position.coords.longitude)
+      },
+        // { enableHighAccuracy: true, timeout: 1000, maximumAge: 1000 }
+      );
+    } catch (e) {
+      // console.log(e);
+    }
+  };
+
+  clearProfileDoctor = (user) => {
+    const doctors = this.state.users;
+    const doctor = doctors.indexOf(user);
+
+    doctors.splice(doctor, 1);
+    this.setState({ users: doctors })
+  }
+
   renderRowusers = ({ item }) => {
+
+    const { longitude, latitude } = this.state;
+    const location = { longitude, latitude };
+
     return (
       <View>
         <View>
           <TouchableOpacity
             style={{ borderRadius: 5 }}
-            onPress={() => this.props.navigation.navigate('Profile01', { item })}
+            onPress={() => this.props.navigation.navigate('Profile01', { item, location })}
           >
-          <View style={{marginRight: 10}}>
-            <Favorites />
-          </View>
+            <View style={{ marginRight: 10 }}>
+              <Favorites />
+            </View>
 
             <Image
               source={{ uri: item.photoURL }}
@@ -79,7 +123,7 @@ class Browse01 extends Component {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
             <Icon name='ios-pin' type='ionicon' size={15} color='#999' />
-            <Text style={{ color: '#777' }}> {item.address} ,</Text>
+            <Text style={{ color: '#777' }}> {item.address} -</Text>
             <Text style={{ color: '#777' }}> {item.specialty}</Text>
           </View>
 
@@ -94,17 +138,16 @@ class Browse01 extends Component {
     )
   };
 
-
-  renderItem = ({ item, index }) => {
-
+  renderItem = ({ item }) => {
+    // console.log(item);
 
     return (
-      <TouchableOpacity style={{ marginLeft: 10 }}  onPress={() => this.props.navigation.navigate('Specialty', { item })}>
+      <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => this.props.navigation.navigate('Specialty', { item })}>
 
-        <View style={{  backgroundColor: '#1590f0', width: 100, height: 100, borderRadius: 7 }}>
+        <View style={{ backgroundColor: '#1590f0', width: 100, height: 100, borderRadius: 7 }}>
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Image source={{ uri: item.image}} 
-               style={{  flex: 1, width: width / 4.1, height: height / 1, resizeMode: 'cover', borderRadius: 10, marginTop: 10 }}
+            <Image source={{ uri: item.image }}
+              style={{ flex: 1, width: width / 4.1, height: height / 1, resizeMode: 'cover', borderRadius: 10}}
             />
           </View>
 
@@ -116,10 +159,9 @@ class Browse01 extends Component {
     )
   };
 
-
-
   render() {
-    const { navigation } = this.props;
+    const { navigation, profile } = this.props;
+
     return (
       <View style={styles.logout}>
         <View style={{ marginHorizontal: 10, top: 32 }}>
@@ -127,7 +169,7 @@ class Browse01 extends Component {
           <View style={{ flexDirection: 'row' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Icon name='ios-pin' type='ionicon' />
-              <Text style={styles.location}>Location</Text>
+              {/* <Text style={styles.location}>{profile.address}</Text> */}
             </View>
             <TouchableOpacity style={styles.search} onPress={() => navigation.navigate('Search')}>
               <Ionicons name='ios-search' size={25} style={styles.search} />
@@ -188,22 +230,22 @@ class Browse01 extends Component {
           <FlatList
             data={this.state.users}
             renderItem={this.renderRowusers}
-            keyExtractor={(item) => item.uid}
+            keyExtractor={(item) => item}
           />
         </ScrollView>
 
       </View>
-    )
+    );
+  };
+};
+
+const mapStateToProps = ({ authProfile }) => {
+  return {
+    profile: authProfile.profile
   }
-}
+};
 
-Browse01.defaultProps = {
-
-  categories: specialty.categories,
-
-}
-
-export default Browse01;
+export default connect(mapStateToProps)(Browse01);
 
 
 const styles = StyleSheet.create({
@@ -298,4 +340,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginRight: 10
   }
-})
+});
+
+

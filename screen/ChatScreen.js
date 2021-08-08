@@ -1,7 +1,19 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, FlatList, Dimensions } from 'react-native';
+import { 
+    View, 
+    Text, 
+    StyleSheet, 
+    TouchableOpacity, 
+    SafeAreaView, 
+    TextInput, 
+    FlatList, 
+    Dimensions,
+    KeyboardAvoidingView
+} from 'react-native';
 import { Icon, Divider, Avatar } from 'react-native-elements';
+import { Ionicons } from '@expo/vector-icons';
+import { connect } from 'react-redux';
 
 import firebase from '../Firebase';
 // create a component
@@ -10,47 +22,48 @@ class ChatScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            person: this.props.navigation.getParam('chat'),
-            profile: this.props.navigation.getParam('user'),
+            user: this.props.navigation.getParam('doctor'),
             textMessags: '',
-            messageList: [],
-            dbRef: firebase.database().ref('users')
+            messageList: []
         }
     }
 
     componentWillMount() {
-        
-        firebase.database().ref('messages').child(this.state.profile.uid).child(this.state.person.uid)
+        const { profile } = this.props;
+        const { user } = this.state;
+        firebase.database().ref(`users/profiles/${profile.uid}/messages/`).child(profile.uid).child(user.displayName)
             .on('child_added', (value) => {
                 this.setState((prevState) => {
                     return {
                         messageList: [...prevState.messageList, value.val()]
-                    }
-                })
-            })
-    }
+                    };
+                });
+            });
+    };
 
     handleChange = key => val => {
         this.setState({ [key]: val })
     }
 
     sendMessage = async () => {
-        const { person, profile, textMessags } = this.state;
+        const { user, textMessags } = this.state;
+        const { profile } = this.props;
 
         if (this.state.textMessags.length > 0) {
-            let msgId = firebase.database().ref('messages').child(person.uid).child(profile.uid).push().key;
+            let msgId = firebase.database().ref().push().key;
             let updates = {};
             let message = {
                 message: textMessags,
                 time: firebase.database.ServerValue.TIMESTAMP,
-                from: profile.uid
+                from: profile.uid,
+                photoURL: profile.photoURL
             }
-            updates['messages/' + profile.uid + '/' + person.uid + '/' + person.displayName + msgId] = message
-            updates['messages/' + person.uid + '/' + profile.uid + '/' + profile.displayName + msgId] = message
-            firebase.database().ref().update(updates)
-            this.setState({ textMessags: '' })
+            updates[`users/profiles/${user.uid}/messages/` + user.uid + '/' + profile.displayName + '/' + msgId] = message
+            updates[`users/profiles/${profile.uid}/messages/` + profile.uid + '/' + user.displayName + '/' + msgId] = message
+            firebase.database().ref().update(updates);
+            this.setState({ textMessags: '' });
         }
-    }
+    };
 
     convertTime = (time) => {
         let d = new Date(time);
@@ -67,22 +80,23 @@ class ChatScreen extends Component {
     }
 
     renderRow = ({ item }) => {
+        const { profile } = this.props;
         return (
-            <View>
+            <View style={{ zIndex: 1 }}>
+                <Text style={{ color:'#000', fontSize: 10, textAlign: item.from === this.props.profile.uid ? 'right' : 'left' }}>   {this.convertTime(item.time)}   </Text>
                 <View
                     style={{
                         flexDirection: 'row',
-                        maxWidth: '60%',
-                        alignSelf: item.from === this.state.profile.uid ? 'flex-end' : 'flex-start',
-                        backgroundColor: item.from === this.state.profile.uid ? '#1590f9' : '#eee',
+                        maxWidth: '80%',
+                        alignSelf: item.from === this.props.profile.uid ? 'flex-end' : 'flex-start',
+                        backgroundColor: item.from === this.props.profile.uid ? '#1590f9' : '#eee',
                         borderRadius: 15,
-                        marginTop: 10,
+                        marginTop: 3,
                     }}
                 >
-                    <Text style={{ color: item.from === this.state.profile.uid ? '#fff' : '#000', padding: 7, fontSize: 16 }}>  {item.message}  </Text>
-                </View>
-                <View>
-                    <Text style={{ color: 'gray', fontSize: 10, textAlign: 'right' }}>{this.convertTime(item.time)}  </Text>
+                    <View style={{ marginRight: 1 }}>
+                        <Text style={{ color: item.from === this.props.profile.uid ? '#fff' : '#000', padding: 5, fontSize: 16, textAlign: 'right' }}>    {item.message} </Text>
+                    </View>
                 </View>
             </View>
         )
@@ -90,7 +104,10 @@ class ChatScreen extends Component {
 
     render() {
         let { height } = Dimensions.get('window');
+
+        console.log(this.props.profile)
         return (
+                <KeyboardAvoidingView style={{flex:1}} >
             <View style={styles.container}>
                 <View
                     style={{
@@ -117,10 +134,10 @@ class ChatScreen extends Component {
                                 <Avatar
                                     size={30}
                                     rounded
-                                    source={{ uri: this.state.person.photoURL }}
+                                    source={{ uri: this.state.user.photoURL }}
 
                                 />
-                                <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>{this.state.person.displayName}</Text>
+                                <Text style={{ fontWeight: 'bold', marginLeft: 5 }}>{this.state.user.displayName}</Text>
                             </View>
                         </View>
 
@@ -137,12 +154,11 @@ class ChatScreen extends Component {
 
 
                     <SafeAreaView style={styles.messageList}>
-
                         <FlatList
                             ref={ref => this.flatList = ref}
                             onContentSizeChange={() => this.flatList.scrollToEnd({ animated: true })}
                             onLayout={() => this.flatList.scrollToEnd({ animated: true })}
-                            style={{ padding: 10, height: height * 0.8 }}
+                            style={{ height: height * 0.8, bottom: 5 }}
                             data={this.state.messageList}
                             renderItem={this.renderRow}
                             keyExtractor={(item, index) => index.toString()}
@@ -160,20 +176,19 @@ class ChatScreen extends Component {
 
                             <TouchableOpacity onPress={this.sendMessage}
                                 style={styles.btnSend}>
-                                <Icon
+                                <Ionicons
                                     name='ios-paper-plane'
-                                    type='ionicon'
                                     color='#1590f0'
                                     size={40}
                                 />
                             </TouchableOpacity>
 
                         </View>
-
                     </SafeAreaView>
 
                 </View>
             </View>
+                        </KeyboardAvoidingView>
         );
     }
 }
@@ -186,17 +201,19 @@ const styles = StyleSheet.create({
     },
     messageList: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        bottom: 10,
+        marginTop: 5
     },
     input: {
-        padding: 5,
+        padding: 15,
         borderWidth: 1,
         borderColor: '#CCC',
         width: '85%',
         marginBottom: 10,
         borderRadius: 10,
         marginRight: 7,
-        backgroundColor: '#eeef'
+        backgroundColor: '#eee'
     },
     btnSend: {
         marginBottom: 10,
@@ -205,5 +222,11 @@ const styles = StyleSheet.create({
     }
 });
 
+const mapStateToProps = state => {
+    return {
+        profile: state.authProfile.profile
+    }
+};
+
 //make this component available to the app
-export default ChatScreen;
+export default connect(mapStateToProps)(ChatScreen);

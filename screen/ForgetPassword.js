@@ -16,7 +16,7 @@ onSendPassword = () => {
     
     auth.sendPasswordResetEmail(this.state.email).then(() => {
       // Email sent.
-      Alert.alert('Check you email')
+      Alert.alert('Check your email')
     }).catch((error) => {
       // An error happened.
       Alert.alert(error.message)

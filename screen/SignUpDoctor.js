@@ -9,16 +9,21 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   SafeAreaView,
-  Picker
+  KeyboardAvoidingView,
+  Dimensions
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
+import { Dropdown } from "react-native-material-dropdown-v2";
 
 import IntlPhoneInput from '../src/IntlPhoneInput';
 import { handelSignUpDoctor } from '../actions';
+
+const { width, height } = Dimensions.get('window');
 
 class SignUpDoctor extends Component {
 
@@ -38,22 +43,15 @@ class SignUpDoctor extends Component {
       address: '',
       experience: '',
       addressSchool: '',
-      awards: ''
+      awards: '',
+      latitude: null,
+      longitude: null,
     }
   }
-
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.signup) {
-      this.props.navigation.navigate('Welcome');
-    }
-  }
-
-
-
 
   async signUp() {
-
+    const { latitude, longitude } = this.state;
+    const location = { longitude, latitude };
     const {
       addressSchool,
       experience,
@@ -83,18 +81,34 @@ class SignUpDoctor extends Component {
       specialty,
       hourlyRate,
       address,
-      awards
+      awards,
+      location
     });
 
   }
 
   componentDidMount() {
     this.getPermissionAsync();
-  }
+    this.getLocation();
+  };
 
+  getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    this.setState({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      error: null,
+    });
+  };
 
   getPermissionAsync = async () => {
-    if (Constants.platform.ios) {
+    if (Constants.platform.ios && Constants.platform.android) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
         alert('Sorry, we need camera roll permissions to make this work!');
@@ -119,22 +133,31 @@ class SignUpDoctor extends Component {
   };
 
   pickerList() {
-    return (
-      <Picker
-        placeholder='Specialty'
-        selectedValue={this.state.specialty}
-        style={{ borderColor: '#eee', borderWidth: 1 }}
-        onValueChange={(itemValue, itemIndex) =>
-          this.setState({ specialty: itemValue }) }>
-            
-        <Picker.Item label="Specialty" value="" color='#888' />
-        <Picker.Item label="Cardiology" value="Dentistry" />
-        <Picker.Item label="Neurology" value="Neurology" />
-        <Picker.Item label="Thoracic" value="Thoracic" />
-      </Picker>
 
+    let data = [
+      { value: "Cardiology" },
+      { value: "Neurology" },
+      { value: "Thoracic" },
+    ];
+
+    return (
+      <View style={styles.dropdownView}>
+        <Dropdown
+          pickerStyle={{
+            borderColor: '#fff',
+            backgroundColor: '#fff',
+          }}
+          containerStyle={[styles.containerStyle]}
+          label='Specialty'
+          baseColor={'#999'}
+          data={data}
+          onChangeText={(itemValue, itemIndex) =>
+            this.setState({ specialty: itemValue })}
+        />
+      </View>
     )
   }
+
 
 
   render() {
@@ -157,29 +180,31 @@ class SignUpDoctor extends Component {
 
     return (
       <View style={styles.contanier}>
-        <TouchableWithoutFeedback behavior='padding'>
+        <KeyboardAvoidingView style={{ flex: 1 }} >
           <ScrollView style={{ marginHorizontal: 30, flex: 1 }} showsVerticalScrollIndicator={false}>
 
             <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={styles.greeting}>{`Welcome\nDoctor`}</Text>
 
-              <TouchableOpacity style={styles.photoPlaceholder} onPress={this._pickImage} >
-                {photoURL && <Image source={photoURL ? { uri: photoURL } : require('../images/unnamed.png')} style={styles.photo} />}
-                <Ionicons
-                  displayName='ios-add'
-                  size={40}
-                  color='#FFF'
+              <View style={{ marginTop: 30 }}>
+                <TouchableOpacity style={styles.edit} onPress={this._pickImage} >
+                  <MaterialIcons name='edit' size={15} style={{ color: '#fff' }} />
+                </TouchableOpacity>
+                <Image
+                  style={{ width: 100, height: 100, borderRadius: 50 }}
+                  source={photoURL ? { uri: photoURL } : require('../assets/user.png')}
                 />
-              </TouchableOpacity>
+              </View>
+
             </View>
 
             <Text>Sign Up to join</Text>
 
+            {/* <View style={{ marginTop: 15 }}>
+              {this.props.error && <Text style={{ color: '#E9445f' }} >{this.props.error}</Text>}
+            </View> */}
 
             <View style={styles.form}>
-
-
-
               <View>
                 <TextInput
                   placeholder='Full name'
@@ -268,10 +293,10 @@ class SignUpDoctor extends Component {
                 <TextInput
                   style={{
                     backgroundColor: '#eee',
-                    padding: 10,
+                    padding: 15,
                     borderRadius: 6,
-                    width: 146,
-                    marginRight: 7
+                    width: width / 2.5,
+                    marginRight: 15
                   }}
                   placeholder='Years Experience'
                   keyboardType='number-pad'
@@ -281,10 +306,10 @@ class SignUpDoctor extends Component {
                 <TextInput
                   style={{
                     backgroundColor: '#eee',
-                    padding: 10,
+                    padding: 15,
                     borderRadius: 6,
-                    width: 146,
-                    marginLeft: 3
+                    width: width / 2.5,
+                    marginRight: 5
                   }}
                   placeholder='Hourly rate $'
                   keyboardType='number-pad'
@@ -323,27 +348,19 @@ class SignUpDoctor extends Component {
 
 
             <TouchableOpacity style={styles.button}
-              onPress={() => this.signUp(
-                displayName,
-                email,
-                password,
-                phone,
-                photoURL,
-                medicalSchool,
-                education,
-                specialty,
-                hourlyRate,
-                address,
-                experience,
-                addressSchool,
-                awards
-              )}>
+              onPress={this.signUp.bind(this)}>
               <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Sign Up</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity style={styles.buttoncontainer}
+              onPress={() => this.props.navigation.navigate('Welcome')}>
+              <Text style={{ color: 'gray', fontSize: 13, fontWeight: 'bold' }}>
+                Have an account? <Text style={{ color: '#1690f0', fontSize: 15 }}>Log in</Text>
+              </Text>
+            </TouchableOpacity>
 
           </ScrollView>
-        </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </View>
     );
   };
@@ -351,11 +368,11 @@ class SignUpDoctor extends Component {
 
 
 
-const mapStateToProps = ({ authDoctor }) => {
+const mapStateToProps = state => {
   return {
-    loading: authDoctor.loading,
-    error: authDoctor.error,
-    signup: authDoctor.signup
+    loading: state.authProfile.loading,
+    error: state.authProfile.error,
+    signup: state.authProfile.signup
   }
 }
 
@@ -375,13 +392,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   form: {
-    marginTop: 30,
+    marginTop: 15,
   },
   input: {
     backgroundColor: '#eee',
-    padding: 10,
+    padding: 15,
     borderRadius: 6,
-    width: 300,
+    width: width / 1.2
   },
   button: {
     backgroundColor: '#1690f0',
@@ -392,24 +409,43 @@ const styles = StyleSheet.create({
     elevation: 1,
     marginTop: 15
   },
-  photoPlaceholder: {
-    width: 79,
-    height: 79,
-    borderRadius: 50,
-    backgroundColor: 'gray',
-    marginTop: 60,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  photo: {
-    position: 'absolute',
-    width: 79,
-    height: 79,
-    borderRadius: 50,
-    backgroundColor: '#E1E2E6',
-    marginTop: 32
-  },
   marginInput: {
     marginTop: 15
+  },
+  edit: {
+    position: 'absolute',
+    zIndex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#6CDC17',
+    width: 30,
+    height: 30,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
+    marginTop: 65
+  },
+  buttoncontainer: {
+    position: 'relative',
+    alignSelf: 'center',
+    marginTop: 30,
+    marginBottom: 38
+  },
+  dropdownView: {
+    // width: width - 50,
+    shadowOffset: { width: 0, height: 2 },
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    borderRadius: 5,
+    elevation: 2,
+    // marginTop: 30,
+    // marginHorizontal: 20,
+    borderWidth: .5,
+    borderColor: '#ced2dc'
+  },
+  containerStyle: {
+    marginTop: -10,
+    height: 60,
   },
 })

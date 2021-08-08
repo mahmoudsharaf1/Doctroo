@@ -17,7 +17,7 @@ export const savelocation = ({address, latitude, longitude}) => {
 
             let uid = firebase.auth().currentUser.uid
 
-            await firebase.database().ref('users/profiles/').push({address, latitude, longitude})
+            await firebase.database().ref('users/profiles/' + uid).push({address, latitude, longitude})
 
             dispatch({ type: LOCATION_SUCCESS });
 

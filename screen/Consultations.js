@@ -22,7 +22,7 @@ const { width } = Dimensions.get("window");
 class Consultations extends Component {
 
   state = {
-    users: [],
+    users:[],
     active: 'Chats',
     xTabOne: 0,
     xTabTwo: 0,
@@ -32,40 +32,20 @@ class Consultations extends Component {
     translateY: -1000
   }
 
-  componentWillMount() {
 
-    const { profile } = this.props;
-
-    firebase.database().ref('messages').on('child_added', (val) => {
-        let person = val.val();
-        person.uid = val.key; 
-        if(person.uid === profile.uid){
-            profile.displayName = person.name
-            profile.photoURL = person.image ? person.image : null
-        }else {
-            this.setState((prevState) => {
-                return {
-                    users: [...prevState.users, person]
-                }
-            })
+  componentDidMount() {
+    const {profile} = this.props
+    firebase.database().ref(`users/profiles/${profile.uid}/messages/`).child(profile.uid).on('child_added', (val) => {
+      const users = val.val();
+      users.uid = val.key;
+      console.log(users)
+      this.setState((prevState) => {
+        return {
+          users: [...prevState.users, users]
         }
-    })
-}
-
-  // componentWillMount() {
-
-  //   firebase.database().ref('users').on('child_added', (val) => {
-  //     let person = val.val();
-  //     person.uid = val.key;
-  //     console.log(person.uid)
-
-  //     this.setState((prevState) => {
-  //       return {
-  //         users: [...prevState.users, person]
-  //       }
-  //     })
-  //   })
-  // }
+      })
+    })  
+  }
 
 
   handleSlide = type => {
@@ -79,28 +59,33 @@ class Consultations extends Component {
     } = this.state;
     Animated.spring(translateX, {
       toValue: type,
-      duration: 100
+      duration: 100,
+      useNativeDriver: true
     }).start();
     if (active === 0) {
       Animated.parallel([
         Animated.spring(translateXTabOne, {
           toValue: 0,
-          duration: 100
+          duration: 100,
+          useNativeDriver: true
         }).start(),
         Animated.spring(translateXTabTwo, {
           toValue: width,
-          duration: 100
+          duration: 100,
+          useNativeDriver: true
         }).start()
       ]);
     } else {
       Animated.parallel([
         Animated.spring(translateXTabOne, {
           toValue: -width,
-          duration: 100
+          duration: 100,
+          useNativeDriver: true
         }).start(),
         Animated.spring(translateXTabTwo, {
           toValue: 0,
-          duration: 100
+          duration: 100,
+          useNativeDriver: true
         }).start()
       ]);
     }
@@ -108,15 +93,17 @@ class Consultations extends Component {
 
 
   renderRow = ({ item }) => {
+    const doctor = item;
+    
     return (
       <TouchableOpacity
-        onPress={() => this.props.navigation.navigate('ChatScreen', { item })}
+        onPress={() => this.props.navigation.navigate('ChatScreen', { doctor })}
         style={{ flexDirection: 'row', marginTop: 15 }}>
         <Image
-          source={item.photoURL ? { uri: item.photoURL } : require('../images/interface.png')}
+          source={{ uri: item.photoURL }}
           style={{ width: 80, height: 80, resizeMode: 'cover', borderRadius: 50, marginRight: 10 }}
         />
-        <Text style={{ fontSize: 18, color: '#000' }}>{item.uid.displayName}</Text>
+        <Text style={{ fontSize: 18, color: '#000' }}>{item.uid}</Text>
       </TouchableOpacity>
     )
   };
@@ -129,9 +116,10 @@ class Consultations extends Component {
       active,
       translateXTabOne,
       translateXTabTwo,
-      translateY
+      translateY,
+      
     } = this.state;
-
+    
     return (
       <View style={styles.contanier}>
         <View style={{ marginHorizontal: 13, top: 32 }}>
@@ -173,7 +161,7 @@ class Consultations extends Component {
               <Text style={{ color: '#000' }}>Calls</Text>
             </TouchableOpacity>
           </View>
-
+              
           <ScrollView style={{ marginTop: 20 }}>
             <Animated.View
               style={{ transform: [{ translateX: translateXTabOne }] }}
@@ -214,7 +202,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     marginTop: 38,
     flexDirection: 'row',
-    
+
   },
   tab: {
     marginRight: 25,
@@ -223,16 +211,11 @@ const styles = StyleSheet.create({
 
 })
 
-const mapStateToProps = state => {
+const mapStateToProps = ({authProfile}) => {
   return {
-
-    loading: state.authProfile.loading,
-    error: state.authProfile.error,
-    signup: state.authProfile.signup,
-    profile: state.authProfile.profile,
-    login: state.authProfile.login,
+    profile: authProfile.profile,
 
   }
 };
 
-  export default connect (mapStateToProps)(Consultations);
+export default connect(mapStateToProps)(Consultations);

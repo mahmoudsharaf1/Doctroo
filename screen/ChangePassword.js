@@ -1,9 +1,13 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import firebase from '../Firebase';
+
+const { width, height } = Dimensions.get('window');
+
+
 // create a component
 class ChangePassword extends Component {
 
@@ -16,7 +20,8 @@ onChangePassword = () => {
 
     user.updatePassword(this.state.newPassword).then(() => {
     // Update successful.
-        Alert.alert('Password has been change')
+        Alert.alert('Password has been change');
+        this.setState({ newPassword: ''})
     }).catch((error) => {
     // An error happened.
         Alert.alert(error.message)
@@ -35,8 +40,10 @@ onChangePassword = () => {
                 </View>
                 <View style={{ marginHorizontal: 15,  justifyContent: 'flex-start', alignItems: 'center', marginTop: 90}}>
                     <TextInput  
-                        placeholder='add new password' style={styles.input}
-                        autoCapitalize='none' 
+                        style={styles.input}
+                        placeholder='add new password' 
+                        autoCapitalize='none'
+                        secureTextEntry
                         onChangeText={(text) => this.setState({ newPassword: text })}
                         value={this.state.newPassword}
                     />
@@ -56,20 +63,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     input: {
-        borderWidth: .5,
-        padding: 7,
+        backgroundColor: '#eee',
+        padding: 10,
         borderRadius: 4,
-        width: '95%',
-        borderColor: '#1590f0',
+        width: width / 1.1,
     },
     button: {
-        marginTop: 30,
-        marginHorizontal: 90,
         backgroundColor: '#1690f0',
         borderRadius: 4,
-        height: 42,
+        padding: 5,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        elevation: 1,
+        marginTop: 15,
+        marginHorizontal: 15,
       }
 });
 
